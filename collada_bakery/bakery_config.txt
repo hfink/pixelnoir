@@ -1,0 +1,38 @@
+// The directory where to store output.
+outdir = assets_baked
+
+// COLLADA Input files to parse. The path of the input file is either
+// absolute, or relative to the working directory.
+// You can specify mulitple files by separating them with spaces.
+input = assets_collada/default_scene.dae
+
+// Rebuild options file. This is necessary when a new config
+// parameter has been added and we want to add the default value to
+// our options. The application will automatically set this value
+// back to false.
+save_options = false
+
+// Enables/Disables database value compression. Use this option to reduce
+// the file size of the bake products.
+db_compression = true
+
+// Threshold to insert STEP interpolation in animation parsing.
+step_threshold = 10
+
+// Default shininess of dust material. This value is only set, if
+// the imported file does not specify its own shihiness value in the
+// material.
+dust_shininess = 20
+
+// Default thickness of dust material.
+dust_thickness = 0.25
+
+// Default minimum angle of dust material.
+dust_min_angle = 0.5
+
+// Default exponent of dust material.
+dust_exponent = 0.5
+
+// Default dust-color of dust material.
+dust_color = 0.8 0.8 1
+

@@ -1,0 +1,351 @@
+<!--
+Copyright (c) 2010 Heinrich Fink <hf (at) hfink (dot) eu>, 
+                   Thomas Weber <weber (dot) t (at) gmx (dot) at>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+
+<config name="RtrPlayerConfig">
+  <include>
+    #include "common.h"
+  </include>
+
+  <enums>
+    <enum name="WindowMode">
+      <element name="FULLSCREEN"/>
+      <element name="WINDOWED"/>
+    </enum>
+  </enums>
+
+  <enums>
+    <enum name="OctreeStorageType">
+      <element name="FULL_ARRAY"/>
+      <element name="SPARSE_MAP"/>
+    </enum>
+  </enums>
+
+  <values>
+    
+    <value name="window_width" type="int" default="800">
+      Width of the window in pixels.
+    </value>
+    
+    <value name="window_height" type="int" default="600">
+      Height of the window in pixels.
+    </value>
+
+    <value name="window_mode" type="WindowMode" default="WINDOWED">
+      Selects the type of window that shall be created.
+      Either FULLSCREEN or WINDOWED
+    </value>
+
+    <value name="aspect_ratio" type="float" default="2.35">
+      Aspect ratio of the rendered region. 
+      The rest of the window will be letterboxed.
+      If aspect_ratio is set to 0, the aspect ratio will always match
+      the window. 
+    </value>
+
+    <value name="clear_color" type="vec4" default="0.01 0.01 0.1 1.0">
+      The OpenGL clear color.
+    </value>
+
+    <value name="letterbox_color" type="vec4" default="0.0 0.0 0.0 1.0">
+      The color of the letterboxes.
+    </value>
+
+    <value name="swap_interval" type="int" default="2">
+      Controls vertical sync.
+      Specifies the number of screen redraws to wait for during buffer swap.
+      0 means no vsync.
+    </value>
+
+    <value name="window_title" type="string" default="RTR Demo 2010">
+      The window title of our program.
+    </value>
+
+    <value name="fsaa_samples" type="int" default="4">
+      Number of FSAA samples.
+      0 means no anti-aliasing.
+    </value>
+
+    <value name="max_anisotropy" type="float" default="8.0">
+      Controls anisotropic filtering for mipmapped textures.
+      More anisotropy is nicer. max_anisotropic=1.0f disables anisotropic 
+      filtering.
+    </value>
+
+    <value name="draw_wireframe" type="bool" default="false">
+      Enables wireframe mode.
+    </value>
+
+    <value name="save_options" type="bool" default="false">
+      Rebuild options file. This is necessary when a new config
+      parameter has been added and we want to add the default value to
+      our options. The application will automatically set this value
+      back to false.
+    </value>
+
+    <value name="mouse_catch" type="bool" default="false">
+      This directs the application not to catch the mouse cursor.
+      This is useful while debugging. The freelook camera is
+      controlled by left-dragging on the screen instead.
+    </value>
+
+    <value name="enable_octree_culling" type="bool" default="true">
+      Enables View Frustum culling using a Loose Octree.
+    </value>
+
+    <value name="octree_storage_type" 
+           type="OctreeStorageType" 
+           default="SPARSE_MAP">
+      Defines the backend storage as used for the accelerating LooseOctree. In 
+      most cases SPARSE_MAP will be the right choice.
+    </value>
+
+    <value name="octree_statistics" type="bool" default="false">
+      Enables LooseOctree statistics collection which might be useful to 
+      determine the optimal parameters of an octree for a particular scene.
+    </value>
+
+    <value name="octree_debug" type="bool" default="false">
+      Enables LooseOctree debugging mode, where debug information will be
+      collected and displayed. Note that this might have a small performance
+      impact on the performance of the octree.
+    </value>
+
+    <value name="draw_bounding_geometry" default="false" type="bool">
+      If enabled, the bounding geometry of meshes are drawn.
+    </value>
+    
+    <value name="octree_max_depth" type="int" default="6">
+      Specify the maximum depth of the accelerating octree. This highly depends
+      on the actual scene.
+    </value>
+
+    <value name="shader_dir" type="string" default="shaders">
+      Search dir for shader files.
+    </value>
+
+    <value name="material_dir" type="string" default="materials">
+      Search dir for material files.
+    </value>
+
+    <value name="input" type="string" default="assets/default_scene.rtr">
+      The scene data to load. Scene files are 
+      databases containing key-value pairs, where the values conform to one of 
+      the message specifications as defined by rtr_format.proto.
+    </value>
+
+    <value name="texture_dir" type="string" default="textures">
+      Search directory for textures that don't depend on assets.
+      (For instance a fallback texture or particle textures.)
+    </value>
+
+    <value name="play_music" type="bool" default="false">
+      Enables music playback.
+    </value>
+
+    <value name="audio_dir" type="string" default="audio">
+      Search directory for audio files.
+    </value>
+
+    <value name="background_sound" type="string" default="background.ogg">
+      The background audio file within the audio directory. This is an option
+      just because its nice to easily swap the background audio without
+      recompiling.
+    </value>
+    
+    <value name="print_gl_limits" type="bool" default="false">
+      Print some interesting limits of OpenGL implementation.
+    </value> 
+
+    <value name="freelook_angle_speed" type="float" default="1">
+      Rotation speed of camera in degrees / moved pixel * second.
+    </value>
+
+    <value name="freelook_strafe_speed" type="float" default="1">
+      Strafing speed of camers in scene units / second.
+    </value>
+
+    <value name="freelook_strafe_keys" type="string" default="DAWSRF">
+      Keys for camera strafing. In the order +X,-X,+Y,-Y,+Z,-Z
+    </value>
+
+    <value name="animation_offset" type="float" default="0">
+      For testing animation we sometimes want to control the offset when
+      animations are started. This is mainly for debugging animation import.
+    </value>
+
+    <value name="use_depth_of_field" type="bool" default="true">
+      Enables depth-of-field post-process effect.
+    </value>
+    
+    <value name="dof_blur_radius" type="float" default="2">
+      Normalized blur radius. The diameter of the Depth of Field blur
+      radius in pixel if the screen were 600 pixels tall. This is
+      automatically adjusted to the Window size.
+    </value>
+
+    <value name="dof_far_radius" type="float" default="0.25">
+      Size of the circle of confusion of far objects, relative to the CoC 
+      of near objects.
+    </value>
+
+    <value name="dof_depth_range_100" type="vec4" default="1 95 105 1000">
+      The depth-of-field parameters normalized to depth 100.
+      Those parameters are scaled to fit to other focus depths.
+      They are separated into (near_end, near_start, far_start, far_end).
+      Everything between near_start and far_start is in focus.
+      Maximum blur is reached at near_end and far_end.
+    </value>
+
+    <value name="dof_default_focus" type="float" default="50">
+      Default focus depth for cameras that don't specify a focus-point.
+    </value>
+
+    <value name="shadowmap_size" type="int" default="512">
+      Height and width of shadowmaps in pixels. Shadowmaps are always square. 
+    </value>
+
+    <value name="shadowmap_near" type="float" default="0.1">
+      Near depth of shadow map volume.
+    </value>
+
+    <value name="shadowmap_far" type="float" default="1000">
+      Far depth of shadow map volume.
+    </value>
+
+    <value name="shadowmap_bias" type="float" default="0.25">
+      Depth bias of shadow maps.
+    </value>
+
+    <value name="shadowmap_min_variance" type="float" default="0.5">
+      Minimum variance for variance shadowmaps. Improves problems with 
+      artifacts.
+    </value>
+
+    <value name="shadowmap_bleed_bias" type="float" default="0.9">
+      Bias factor between 0 and 1. Use this to remove light bleeding
+      artifacts in variance shadowmaps. This darkens the shadow a bit.
+    </value>
+
+    <value name="shadowmap_blur_radius" type="float" default="2">
+      Blur radius for shadowmap. This value is in pixels, normalized
+      to a shadowmap_size of 512.
+      A blur radius of 0 disables blurring.
+    </value>
+
+    <value name="shadowmap_spot_angle_factor" type="float" default="1.1">
+      Factor to enlarge a spotlight's opening angle by for shadow
+      rendering. This is necessary to avoid artifacts from filtered maps.
+    </value>
+
+    <value name="use_shadowmaps" type="bool" default="true">
+      Enables shadowmapping for spot lights.
+    </value>
+
+    <value name="observer_cam_height" type="float" default="30">
+      Sets the initial height over the render camera for the observer camera.
+    </value>
+
+    <value name="observer_cam_focus_offset" type="float" default="10">
+      Sets an offset where the observer cam is focused along the rendercameras
+      view direction.
+    </value>
+
+    <value name="dust_center" type="vec3" default="0 0 0">
+      Center of dust particle volume.
+    </value>
+
+    <value name="dust_size" type="vec3" default="10 10 10">
+      Extents of dust particle volume.
+    </value>
+
+    <value name="dust_particle_count" type="int" default="1000">
+      The number of concurrent particles per dust particle system.
+    </value>
+
+    <value name="dust_min_life" type="float" default="3">
+      The minimum life of a dust particle in seconds.
+    </value>
+
+    <value name="dust_max_life" type="float" default="6">
+      The maximum life of a dust particle in seconds.
+    </value>
+
+    <value name="dust_size_factor" type="float" default="300">
+      Size of dust particles.
+    </value>
+
+    <value name="dust_light_factor" type="float" default="1">
+      Dust particle light response factor.
+      Part of light that is reflected.
+    </value>
+
+    <value name="dust_light_exponent" type="float" default="1.5">
+      Dust particle light response exponent. 
+      This changes the contrast of lighted dust particles.
+    </value>
+
+    <value name="dust_particle_alpha" type="float" default="0.05">
+      Dust particle alpha value.
+      Transparency of dust particle.
+    </value>
+
+    <value name="dust_particle_speed" type="float" default="1.00">
+      Defines the speed in which the particles fall down to the ground.
+    </value>
+
+    <value name="dust_debug" type="bool" default="false">
+      Draw dust volume borders.
+      This allows you to visualize and tweak the particle volume.
+      You can use the keys HKUJTG to move the volume. Hold SHIFT for resize.
+      HL ... move/resize X axis
+      UJ ... move/resize Y axis
+      TG ... move/resize Z axis
+    </value>
+
+    <value name="barrel_distortion" type="float" default="8">
+      Distortion value for post-process barrel-distortion.
+      A higher value means weaker distortion.
+    </value>
+
+    <value name="offline_render_mode" type="bool" default="false">
+      Set to true to enable an offline renderer mode instead of the default
+      realtime mode. This mode is non-interactive and renders an image 
+      sequence that can be used to build a high-quality screencast of the
+      loaded scene.
+    </value>
+
+    <value name="offline_render_mode_duration" type="float" default="30">
+      The length of the shot to be rendered. In seconds.
+    </value>    
+    
+    <value name="offline_render_mode_fps" type="float" default="24">
+      The framerate for the offline renderer mode. 
+    </value>
+
+    <value name="offline_render_mode_output_dir" type="string" default="./output">
+      The directory where rendered screens are going to be written to.
+    </value>    
+
+  </values>
+  <global name="config"/>
+</config>

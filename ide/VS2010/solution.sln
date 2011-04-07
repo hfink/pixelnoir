@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "player", "..\..\player\ide\VS2010\player.vcxproj", "{A8EA53C1-71D1-4409-AEB5-43E42E6A22DF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "collada_bakery", "..\..\collada_bakery\ide\VS2010\collada_bakery.vcxproj", "{7D95AB14-3453-49C6-ADB1-C647EE845AC6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_NoMemLeaks|Win32 = Debug_NoMemLeaks|Win32
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8EA53C1-71D1-4409-AEB5-43E42E6A22DF}.Debug_NoMemLeaks|Win32.ActiveCfg = Debug_NoMemLeaks|Win32
+		{A8EA53C1-71D1-4409-AEB5-43E42E6A22DF}.Debug_NoMemLeaks|Win32.Build.0 = Debug_NoMemLeaks|Win32
+		{A8EA53C1-71D1-4409-AEB5-43E42E6A22DF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A8EA53C1-71D1-4409-AEB5-43E42E6A22DF}.Debug|Win32.Build.0 = Debug|Win32
+		{A8EA53C1-71D1-4409-AEB5-43E42E6A22DF}.Release|Win32.ActiveCfg = Release|Win32
+		{A8EA53C1-71D1-4409-AEB5-43E42E6A22DF}.Release|Win32.Build.0 = Release|Win32
+		{7D95AB14-3453-49C6-ADB1-C647EE845AC6}.Debug_NoMemLeaks|Win32.ActiveCfg = Debug_NoMemLeaks|Win32
+		{7D95AB14-3453-49C6-ADB1-C647EE845AC6}.Debug_NoMemLeaks|Win32.Build.0 = Debug_NoMemLeaks|Win32
+		{7D95AB14-3453-49C6-ADB1-C647EE845AC6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7D95AB14-3453-49C6-ADB1-C647EE845AC6}.Debug|Win32.Build.0 = Debug|Win32
+		{7D95AB14-3453-49C6-ADB1-C647EE845AC6}.Release|Win32.ActiveCfg = Release|Win32
+		{7D95AB14-3453-49C6-ADB1-C647EE845AC6}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

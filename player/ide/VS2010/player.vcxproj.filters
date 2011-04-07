@@ -1,0 +1,396 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Generated">
+      <UniqueIdentifier>{ec1c30f6-1fd4-4315-bcee-cd4e8d652eb3}</UniqueIdentifier>
+      <Extensions>cpp;h;</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{eb7cd342-7eab-43b0-a30f-79d9c22f8d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="material_shaders">
+      <UniqueIdentifier>{e41ddcfe-206e-4b67-938e-1bf2c30c8a26}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\build\src_generated\rtr_format.pb.cc">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\build\src_generated\player\ExtGL.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\build\src_generated\player\format_map.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\build\src_generated\player\RtrPlayerConfig.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\AnimEvaluator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\BoundingVolume.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DBLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DustParticles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\FBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\FreeLookController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GaussianBlur.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Geometry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InputHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LayerSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LooseOctree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\MaterialManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh_generation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ObjectIndex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\PostProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Runtime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\SceneObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\SoundController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\TextureArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UniformBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\AnimEvaluator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ArrayAdapter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ArrayAdapter_Definition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\BoundingVolume.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DBLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DustParticles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\FBO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\FreeLookController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GaussianBlur.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Geometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\InputHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LayerSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LooseOctree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\MaterialManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh_generation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ObjectIndex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\PostProcess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\roots.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Runtime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\SceneObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\SoundController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\TextureArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\type_info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\UniformBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Viewport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\build\src_generated\rtr_format.pb.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\build\src_generated\player\ExtGL.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\build\src_generated\player\format_map.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\build\src_generated\player\RtrPlayerConfig.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\material_shaders\BlinnOrenNayar.frag">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\BlinnOrenNayar.vert">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\Constant.frag">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\Constant.vert">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\Dusty.frag">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\Dusty.vert">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\LambertBlinn.frag">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\LambertBlinn.vert">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\Silk.frag">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\Silk.vert">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\Standard.frag">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\Standard.vert">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\Velvet.frag">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\material_shaders\Velvet.vert">
+      <Filter>material_shaders</Filter>
+    </None>
+    <None Include="..\..\src\config.xml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\src\extensions.txt">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\shaders\calc_coc.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\calc_coc.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\dust.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\dust.geom">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\dust.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\eval_light.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\horz_blur_array_shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\horz_blur_array_shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\horz_blur_shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\horz_blur_shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\line.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\line.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\post_process.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\post_process.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\post_process_dof.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\post_process_dof.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\pre_blur.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\pre_blur.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\shadow.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\shadow.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\shared.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\shrink.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\shrink.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\shrink_fallback.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\shrink_fallback.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\standard.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\standard.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\transform.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\vert_blur_shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\vert_blur_shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\player_config.txt">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

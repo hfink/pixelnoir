@@ -1,0 +1,356 @@
+//Copyright (c) 2010 Heinrich Fink <hf (at) hfink (dot) eu>, 
+//                   Thomas Weber <weber (dot) t (at) gmx (dot) at>
+//
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:
+//
+//The above copyright notice and this permission notice shall be included in
+//all copies or substantial portions of the Software.
+//
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//THE SOFTWARE.
+
+option optimize_for = LITE_RUNTIME;
+
+package rtr_format;
+
+// Data sources for layers
+// Note that we assume that one single source with multiple components
+// is always tightly packed.
+message LayerSource {
+
+    enum Type {
+        FLOAT=1; 
+        INT32=2;
+    }
+
+    //TODO: probably rename this to name, since the ID is actually only unique
+    //within the collection of sources..
+    required string id = 1;
+    required Type type = 2;
+    repeated int32 int_data = 4 [packed=true];
+    repeated float float_data = 5 [packed=true];
+}
+
+//This maps to a mesh in our framework
+message Mesh {
+
+    message BoundingSphere {
+        required float center_x = 1;
+        required float center_y = 2;
+        required float center_z = 3;
+        required float radius = 4;
+    }
+
+    // A layer is a sink to the above data sources
+    message VertexAttributeLayer {
+        // by convention, a layer with the name position
+        // holds the vertex position data 
+        required string name = 1;
+        required string source = 2;
+        required int32 num_components = 3;
+        // denotes the first index of this layer
+        // note that the length is implicitly given by the number of
+        // vertices in PrimitiveBatch
+        //TODO: make in which units this is to be interpreted!!!
+        required int32 source_index = 4;
+    }
+
+    // This is a subset of OGL 4.1 compatible
+    // primitive types, we might add more in the future (like PATCHES, ...)
+    enum PrimitiveType {
+        TRIANGLES=1; 
+        TRIANGLE_STRIP=2;
+    }
+
+    required string id = 1;
+    required PrimitiveType primitive_type = 2;
+    //Note: when we use index_data, this field is actually
+    //redundant, but it might be useful, if we work without indices
+    //in array mode.
+    required int32 vertex_count   = 3;
+
+    // Note that these attributes layer are per vertex
+    // These will be stored as VAOs as well
+    repeated VertexAttributeLayer layer = 4;
+    repeated uint32 index_data  = 5 [packed=true];
+    
+    //Describe a bounding sphere of the mesh in object coordinates
+    required BoundingSphere bounding_sphere = 6;
+}
+
+message Animation {
+
+    message Sampler {
+        required string id = 1;
+        required int32 segment_count = 2;
+
+        required int32 components = 3;
+        repeated float control_point =  4 [packed = true];
+
+        // control_points:
+        // Bezier-Spline control points. 
+        // Size = (segment_count*3+1) * components
+        // The fourth control point is also the first control point of
+        // the next spline. The start of the splines for coordinate dim
+        // can be found at control_points[(segment_count*3+1)*dim]
+        // The segment n for coordinate dim is at
+        // control_points[(segment_count*3+1)*dim + 3 * n]
+        // Example(4 segments, 1 dimension):
+        // A1,A2,A3,A4=B1,B2,B3,B4=C1,C2,C3,C4=D1,D2,D3,D4
+
+
+        // enum Behavior {
+        //     CONSTANT = 1;
+        //     GRADIENT = 2;
+        //     CYCLE = 3;
+        //     OSCILLATE = 4;
+        //     CYCLE_RELATIVE = 5;            
+        // }
+        // required Behavior pre_behavior  = 4 [default = CONSTANT];
+        // required Behavior post_behavior = 5 [default = CONSTANT];
+    }
+
+    message Channel {
+
+        required string time_sampler = 1;
+        required string data_sampler = 2;
+
+        required string target = 3;
+    }
+
+    required string id = 1;
+    repeated Sampler sampler = 2;
+    repeated Channel channel = 3;
+}
+
+enum ParamType {
+    TEXTURE = 0;
+    INT = 1;
+    IVEC2 = 2;
+    IVEC3 = 3;
+    IVEC4 = 4;
+    FLOAT = 5;
+    VEC2 = 6;
+    VEC3 = 7;
+    VEC4 = 8;
+    MAT2 = 9;
+    MAT3 = 10;
+    MAT4 = 11;
+    SPECIAL = 12;
+}
+
+message Parameter {
+    required string name = 1;
+    required ParamType type = 2;
+
+    optional string svalue = 3;
+    repeated int32 ivalue = 4;
+    repeated float fvalue = 5;
+}
+
+message Material {
+    //A unique name-identifier within a scene
+    required string id = 1;
+    //String name of the actual material name as represented by shader/ill
+    //model representation
+    required string shader = 2;
+    //A list of free named parameters (input to uniforms of a shader)
+    repeated Parameter parameter = 3;
+}
+
+//some general math structures
+
+message Vec3f {
+    required float x = 1;
+    required float y = 2;
+    required float z = 3;
+}
+
+message Mat4f {
+    //m[rowNum][colNum]
+    //m01 -> value at first row / second column
+    required float m00 = 1;
+    required float m01 = 2;
+    required float m02 = 3;
+    required float m03 = 4;
+
+    required float m10 = 5;
+    required float m11 = 6;
+    required float m12 = 7;
+    required float m13 = 8;
+
+    required float m20 = 9;
+    required float m21 = 10;
+    required float m22 = 11;
+    required float m23 = 12;
+
+    required float m30 = 13;
+    required float m31 = 14;
+    required float m32 = 15;
+    required float m33 = 16;
+}
+
+//A geometry is instancing a mesh. A geometry also store material related
+//data, wheareas multiple PrimitiveBatches are mapped to individual materials
+
+message Geometry {
+
+    required string id = 1;
+    required string transform_node = 2;
+    required string mesh_id = 3;
+    required string material_id = 4;
+
+}
+
+//atm we assume that we are dealing with perspective projections only
+
+message Camera {
+
+    enum FOV_AXIS {
+        X_AXIS = 0;
+        Y_AXIS = 1;
+    }
+
+    required string id = 1;
+    required string transform_node = 2;
+
+    //in degrees
+    required float fov_angle = 3;
+    required FOV_AXIS fov_axis = 4;
+
+    //distances to near/far plane, positive values
+    required float z_near = 5;
+    required float z_far = 6;
+
+    //An optional string identifying a transform node which represents the
+    //location of a target node
+    optional string target_node = 7;
+}
+
+message Light {
+
+    message Attenuation {
+        required float start = 1;
+        required float end = 2;
+    }
+
+    message SpotAttenuation {
+        required float hotspot_angle = 1;
+        required float falloff_angle = 2;
+    }
+
+    enum Type {
+        AMBIENT = 1;
+        DIRECTIONAL = 2;
+        POINT = 3;
+        SPOT = 4;
+    }
+
+    required string id = 1;
+    required string transform_node = 2;
+
+    required Vec3f intensity = 3;
+    required float multiplier = 4;
+
+    required Type type = 5;
+
+    required bool use_shadowmaps = 6;
+
+    //valid this field might be set if we have POINT or SPOT type
+
+    //Note that we can have either near of far attenuation
+    optional Attenuation near_attenuation = 7;
+    optional Attenuation far_attenuation = 8;
+    
+    //this field is only set for SPOT types
+    optional SpotAttenuation spot_attenuation = 9;
+}
+
+message Transform {
+
+    message LookAt {
+        required Vec3f position = 1;
+        required Vec3f point_of_interest = 2;
+        required Vec3f up = 3;
+    }
+
+    message Rotate {
+        required Vec3f axis = 1;
+        //in degrees!
+        required float angle = 2;
+    }
+
+    message Scale {
+        required Vec3f value = 1;
+    }
+
+    message Translate {
+        required Vec3f value = 1;
+    }
+
+    message Skew {
+        required float angle = 1;
+        required Vec3f rotation_axis = 2;
+        required Vec3f translation_axis = 3;
+    }
+
+    enum Type {
+        LOOKAT = 1;
+        MATRIX = 2;
+        ROTATE = 3;
+        SCALE = 4;
+        TRANSLATE = 5;
+        SKEW = 6;
+    }
+    //NOTE: this ID must be unique, i.e. it should include the TransformNode
+    //ID which is guaranteed to be unique within one scene
+    //This is because the animator has no namespace support, the actual
+    //ID must be unique
+    required string id = 1;
+    required Type type = 2;
+        
+    optional LookAt lookat = 3;
+    optional Mat4f matrix = 4;
+    optional Rotate rotate = 5;
+    optional Scale scale = 6;
+    optional Translate translate = 7;
+    optional Skew skew = 8;
+}
+
+message TransformNode {
+    required string id = 1;
+    optional string dependency = 2; //refers to another TransformNode
+    repeated Transform transform = 3;
+}
+
+message Scene {
+
+    //the name of the scene
+    required string name = 1;
+
+    //a scene holds several light, camera and geometries
+    //Note that we do not use a common base class, because we need
+    //them separated for the renderer anyway
+    repeated Light light = 2;
+    repeated Camera camera = 3;
+    repeated Geometry geometry = 4;
+
+    //this sequence of transform nodes is already 
+    //in the correct order in which their matrices could 
+    //be updated in order to keep hierarchical transformations correct
+    //i.e. that means if a node B depends on node A's transform, node A
+    //would occur BEFORE node B in the array
+    repeated TransformNode node = 5;
+
+    repeated string animation = 6;
+}

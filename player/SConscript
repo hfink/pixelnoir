@@ -1,0 +1,124 @@
+# Copyright (c) 2010 Heinrich Fink <hf (at) hfink (dot) eu>, 
+#                    Thomas Weber <weber (dot) t (at) gmx (dot) at>
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+import platform
+
+Import('env')
+Import('config')
+Import('python_exe')
+
+download_glspecs = ARGUMENTS.get('download_glspecs', 0)
+
+env.Append(CPPPATH = 'src')
+env.Append(CPPPATH = '#/build/src_generated/player')
+
+if platform.system() == 'Linux':
+
+    env.ParseConfig("pkg-config libglfw --cflags --libs")
+    
+    env.Append(LIBS = 'GL')
+    env.Append(LIBS = 'IL')
+    env.Append(LIBS = 'sfml-audio')
+    env.Append(LIBS = 'sfml-system')
+    
+elif platform.system() == 'Windows':
+
+    env.Append(LIBPATH = '#/external/GLFW/lib/%s' % config)
+    env.Append(LIBPATH = '#/external/devil/lib/')
+    env.Append(LIBPATH = '#/external/libsfml/lib/%s' % config)
+    env.Append(CPPPATH = '#/external/GLFW/include')
+    env.Append(CPPPATH = '#/external/libsfml/include')
+    env.Append(CPPPATH = '#/external/devil/include')
+
+    env.Append(LIBS = 'OpenGL32.lib')
+    env.Append(LIBS = 'DevIL.lib')
+    env.Append(LIBS = 'ILUT.lib')
+    env.Append(LIBS = 'GLFW.lib')
+    env.Append(LIBS = 'sfml-audio-s.lib')
+    env.Append(LIBS = 'sfml-system-s.lib')
+
+    # Copy DLLs to build directory
+    env.Command('#/build/bin/%s/player' % config, 
+                [], 
+                [Copy("build/bin/%s/DevIL.dll" % config, "external/devil/dll/DevIL.dll"),
+                 Copy("build/bin/%s/ILU.dll" % config, "external/devil/dll/ILU.dll"),
+                 Copy("build/bin/%s/ILUT.dll" % config, "external/devil/dll/ILUT.dll"),
+                 Copy("build/bin/%s/libsndfile-1.dll" % config, "external/libsfml/dll/libsndfile-1.dll"),
+                 Copy("build/bin/%s/openal32.dll" % config, "external/libsfml/dll/openal32.dll")])
+
+    env.SideEffect(['#/build/bin/%s/DevIL.dll' % config, 
+                    '#/build/bin/%s/ILU.dll' % config,
+                    '#/build/bin/%s/ILUT.dll' % config,
+                    '#/build/bin/%s/libsndfile.dll' % config,
+                    '#/build/bin/%s/openal32.dll' % config],
+                    '#/build/bin/%s/player' % config)
+
+if config == 'Debug':
+    env.Append(CPPDEFINES = 'DEBUG_OPENGL')
+else:
+    env.Append(CPPDEFINES = 'NDEBUG')
+
+env.SideEffect(['#/build/bin/%s/player.lib' % config, 
+                '#/build/bin/%s/player.exp' % config],
+                '#/build/bin/%s/player' % config)
+
+env.Command(['#/build/src_generated/player/ExtGL.cpp', 
+             '#/build/src_generated/player/ExtGL.h'], 
+            ['#/player/src/extensions.txt'] 
+            + Glob('#/tools/extensionGen.py') + Glob('#/tools/extGL*'), 
+            python_exe + ' tools/extensionGen.py player/src/extensions.txt -Dbuild/src_generated/player %s' % 
+            ('-d' if download_glspecs else ''))
+
+env.Command(['#/build/src_generated/player/RtrPlayerConfig.cpp', '#/build/src_generated/player/RtrPlayerConfig.h'], 
+            ['#/player/src/config.xml'] + Glob('#/tools/config*'), 
+            python_exe +' tools/configGen.py player/src/config.xml -Dbuild/src_generated/player -Hh -Ccpp')
+
+env.Command(['#/build/src_generated/player/format_map.cpp', '#/build/src_generated/player/format_map.h'], 
+            Glob('#/tools/format*'), 
+            python_exe+' tools/formatMapGen.py player/src/config.xml -Dbuild/src_generated/player -Hh -Ccpp')
+
+env.SideEffect(['#/build/bin/Debug/player.ilk', 
+                '#/build/bin/Debug/player.pdb', 
+                'vc100.idb', 'vc100.pdb'], 
+                '#/build/bin/Debug/player.exe')
+
+env.SideEffect(['#/build/src_gen_lock'], 
+               ['#/build/src_generated/player/ExtGL.cpp', 
+                '#/build/src_generated/player/ExtGL.h',
+                '#/build/src_generated/player/RtrPlayerConfig.cpp', 
+                '#/build/src_generated/player/RtrPlayerConfig.h',
+                '#/build/src_generated/player/format_map.cpp', 
+                '#/build/src_generated/player/format_map.h'])
+
+# Finally, compile and build the player binary
+
+objects = []
+
+o = env.Object(Glob('#/build/src_generated/player/*.cpp'))
+objects.append(o)
+
+o = env.Object('#/build/src_generated/rtr_format.pb.cc')
+objects.append(o)
+
+# Build files in src directory
+o = SConscript('src/SConscript', variant_dir='#/build/intermediate/%s/player' % config, duplicate=0)
+objects.append(o)
+
+env.Program('#/build/bin/%s/player' % config, objects)

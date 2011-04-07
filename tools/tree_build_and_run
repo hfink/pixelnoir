@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Copyright (c) 2010 Heinrich Fink <hf (at) hfink (dot) eu>, 
+#                    Thomas Weber <weber (dot) t (at) gmx (dot) at>
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# At first build the input segment
+
+TYPE=Debug
+
+cd ../ColladaBakery
+
+./build/$TYPE/ColladaBakery.exe --input=segment_shape.dae
+
+# Build the actual scene, where stuff should be written to
+
+./build/$TYPE/ColladaBakery.exe --input=input_scene.dae
+
+# Run the generator
+cd ../tools
+
+python generatescene.py -i ../baked_assets/input_scene.rtr -o ../baked_assets/tree_scene.rtr -c -s ../baked_assets/segment_shape.rtr -k segmentShape -t "ternarytree_1 ternarytree_2 ternarytree_3 ternarytree_4"
+
+# Now run the viewer
+cd ..
+
+./VS2010/Demo/$TYPE/Demo.exe --input=tree_scene.rtr
+

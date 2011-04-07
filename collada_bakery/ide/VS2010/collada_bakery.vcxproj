@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_NoMemLeaks|Win32">
+      <Configuration>Debug_NoMemLeaks</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7D95AB14-3453-49C6-ADB1-C647EE845AC6}</ProjectGuid>
+    <RootNamespace>ColladaBakery</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoMemLeaks|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoMemLeaks|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)\..\..\..\build\bin\$(Configuration)\</OutDir>
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoMemLeaks|Win32'">
+    <OutDir>$(ProjectDir)\..\..\..\build\bin\$(Configuration)\</OutDir>
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)\..\..\..\build\bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\external\protocol_buffers\include;$(ProjectDir)\..\..\..\external\glm\include;$(ProjectDir)\..\..\..\external\devil\include;$(ProjectDir)\..\..\..\external\kyoto_cabinet\include;$(ProjectDir)\..\..\..\external\boost\include;$(ProjectDir)\..\..\..\build\src_generated\collada_bakery;$(ProjectDir)\..\..\..\common;$(ProjectDir)\..\..\..\build\src_generated;$(ProjectDir)\..\..\src;$(ProjectDir)\..\..\..\external\OpenCollada\include\COLLADASaxFrameworkLoader;$(IncludePath);$(ProjectDir)\..\..\..\external\OpenCollada\include\COLLADABaseUtils;$(ProjectDir)\..\..\..\external\OpenCollada\include\COLLADAFramework;$(ProjectDir)\..\..\..\external\OpenCollada\include\GeneratedSaxParser</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;ZLIB_WINAPI;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;ENABLE_WIN_MEMORY_LEAK_DETECTION;_DEBUG</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>libprotobuf-lite.lib;OpenCOLLADASaxFrameworkLoader.lib;GeneratedSaxParser.lib;OpenCOLLADAFramework.lib;OpenCOLLADABaseUtils.lib;MathMLSolver.lib;xml.lib;pcre.lib;UTF.lib;kyotocabinet.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\external\protocol_buffers\lib\$(Configuration);%(AdditionalLibraryDirectories);$(ProjectDir)\..\..\..\external\OpenCollada\lib\static\$(Configuration);$(ProjectDir)\..\..\..\external\kyoto_cabinet\lib\$(Configuration);$(ProjectDir)\..\..\..\external\zlib\lib\$(Configuration);$(ProjectDir)\..\..\..\external\boost\lib\static\$(Configuration)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoMemLeaks|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\external\protocol_buffers\include;$(ProjectDir)\..\..\..\external\glm\include;$(ProjectDir)\..\..\..\external\devil\include;$(ProjectDir)\..\..\..\external\kyoto_cabinet\include;$(ProjectDir)\..\..\..\external\boost\include;$(ProjectDir)\..\..\..\build\src_generated\collada_bakery;$(ProjectDir)\..\..\..\common;$(ProjectDir)\..\..\..\build\src_generated;$(ProjectDir)\..\..\src;$(ProjectDir)\..\..\..\external\OpenCollada\include\COLLADASaxFrameworkLoader;$(IncludePath);$(ProjectDir)\..\..\..\external\OpenCollada\include\COLLADABaseUtils;$(ProjectDir)\..\..\..\external\OpenCollada\include\COLLADAFramework;$(ProjectDir)\..\..\..\external\OpenCollada\include\GeneratedSaxParser</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;ZLIB_WINAPI;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_DEBUG</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>libprotobuf-lite.lib;OpenCOLLADASaxFrameworkLoader.lib;GeneratedSaxParser.lib;OpenCOLLADAFramework.lib;OpenCOLLADABaseUtils.lib;MathMLSolver.lib;xml.lib;pcre.lib;UTF.lib;kyotocabinet.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\external\protocol_buffers\lib\Debug;%(AdditionalLibraryDirectories);$(ProjectDir)\..\..\..\external\OpenCollada\lib\static\Debug;$(ProjectDir)\..\..\..\external\kyoto_cabinet\lib\Debug;$(ProjectDir)\..\..\..\external\zlib\lib\Debug;$(ProjectDir)\..\..\..\external\boost\lib\static\Debug</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\external\protocol_buffers\include;$(ProjectDir)\..\..\..\external\glm\include;$(ProjectDir)\..\..\..\external\devil\include;$(ProjectDir)\..\..\..\external\kyoto_cabinet\include;$(ProjectDir)\..\..\..\external\boost\include;$(ProjectDir)\..\..\..\build\src_generated\collada_bakery;$(ProjectDir)\..\..\..\common;$(ProjectDir)\..\..\..\build\src_generated;$(ProjectDir)\..\..\src;$(ProjectDir)\..\..\..\external\OpenCollada\include\COLLADASaxFrameworkLoader;$(IncludePath);$(ProjectDir)\..\..\..\external\OpenCollada\include\COLLADABaseUtils;$(ProjectDir)\..\..\..\external\OpenCollada\include\COLLADAFramework;$(ProjectDir)\..\..\..\external\OpenCollada\include\GeneratedSaxParser</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;ZLIB_WINAPI;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>libprotobuf-lite.lib;OpenCOLLADASaxFrameworkLoader.lib;GeneratedSaxParser.lib;OpenCOLLADAFramework.lib;OpenCOLLADABaseUtils.lib;MathMLSolver.lib;xml.lib;pcre.lib;UTF.lib;kyotocabinet.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\external\protocol_buffers\lib\$(Configuration);%(AdditionalLibraryDirectories);$(ProjectDir)\..\..\..\external\OpenCollada\lib\static\$(Configuration);$(ProjectDir)\..\..\..\external\kyoto_cabinet\lib\$(Configuration);$(ProjectDir)\..\..\..\external\zlib\lib\$(Configuration);$(ProjectDir)\..\..\..\external\boost\lib\static\$(Configuration)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\build\src_generated\collada_bakery\ColladaBakeryConfig.cpp" />
+    <ClCompile Include="..\..\..\build\src_generated\rtr_format.pb.cc" />
+    <ClCompile Include="..\..\src\AnimationBindingProcessor.cpp" />
+    <ClCompile Include="..\..\src\AnimationProcessor.cpp" />
+    <ClCompile Include="..\..\src\Baker.cpp" />
+    <ClCompile Include="..\..\src\CameraProcessor.cpp" />
+    <ClCompile Include="..\..\src\EffectProcessor.cpp" />
+    <ClCompile Include="..\..\src\ExtraDataHandler.cpp" />
+    <ClCompile Include="..\..\src\GeometryProcessor.cpp" />
+    <ClCompile Include="..\..\src\ImageProcessor.cpp" />
+    <ClCompile Include="..\..\src\LightProcessor.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\MaterialProcessor.cpp" />
+    <ClCompile Include="..\..\src\MeshMultiIndex.cpp" />
+    <ClCompile Include="..\..\src\Processor.cpp" />
+    <ClCompile Include="..\..\src\SaxErrorHandler.cpp" />
+    <ClCompile Include="..\..\src\VisualSceneProcessor.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\build\src_generated\collada_bakery\ColladaBakeryConfig.h" />
+    <ClInclude Include="..\..\..\build\src_generated\rtr_format.pb.h" />
+    <ClInclude Include="..\..\src\AnimationBindingProcessor.h" />
+    <ClInclude Include="..\..\src\AnimationProcessor.h" />
+    <ClInclude Include="..\..\src\Baker.h" />
+    <ClInclude Include="..\..\src\BakerCache.h" />
+    <ClInclude Include="..\..\src\CameraProcessor.h" />
+    <ClInclude Include="..\..\src\cbcommon.h" />
+    <ClInclude Include="..\..\src\EffectProcessor.h" />
+    <ClInclude Include="..\..\src\ExtraDataHandler.h" />
+    <ClInclude Include="..\..\src\GeometryProcessor.h" />
+    <ClInclude Include="..\..\src\ImageProcessor.h" />
+    <ClInclude Include="..\..\src\LightProcessor.h" />
+    <ClInclude Include="..\..\src\MaterialProcessor.h" />
+    <ClInclude Include="..\..\src\MeshMultiIndex.h" />
+    <ClInclude Include="..\..\src\Processor.h" />
+    <ClInclude Include="..\..\src\SaxErrorHandler.h" />
+    <ClInclude Include="..\..\src\Types.h" />
+    <ClInclude Include="..\..\src\Utils.h" />
+    <ClInclude Include="..\..\src\VisualSceneProcessor.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bakery_config.txt" />
+    <None Include="..\..\src\config.xml" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

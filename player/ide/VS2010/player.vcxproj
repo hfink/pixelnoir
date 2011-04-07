@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_NoMemLeaks|Win32">
+      <Configuration>Debug_NoMemLeaks</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A8EA53C1-71D1-4409-AEB5-43E42E6A22DF}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Demo</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoMemLeaks|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoMemLeaks|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\..\..\..\external\protocol_buffers\include;$(ProjectDir)\..\..\..\external\glm\include;$(ProjectDir)\..\..\..\external\GLFW\include;$(ProjectDir)\..\..\..\external\devil\include;$(ProjectDir)\..\..\..\external\boost\include;$(ProjectDir)\..\..\..\build\src_generated\player;$(ProjectDir)\..\..\..\common;$(ProjectDir)\..\..\..\build\src_generated;$(ProjectDir)\..\..\src;$(ProjectDir)\..\..\..\external\kyoto_cabinet\include;$(ProjectDir)\..\..\..\external\libsfml\include;$(IncludePath)</IncludePath>
+    <OutDir>$(ProjectDir)\..\..\..\build\bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoMemLeaks|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\..\..\..\external\protocol_buffers\include;$(ProjectDir)\..\..\..\external\glm\include;$(ProjectDir)\..\..\..\external\GLFW\include;$(ProjectDir)\..\..\..\external\devil\include;$(ProjectDir)\..\..\..\external\boost\include;$(ProjectDir)\..\..\..\build\src_generated\player;$(ProjectDir)\..\..\..\common;$(ProjectDir)\..\..\..\build\src_generated;$(ProjectDir)\..\..\src;$(ProjectDir)\..\..\..\external\kyoto_cabinet\include;$(ProjectDir)\..\..\..\external\libsfml\include;$(IncludePath)</IncludePath>
+    <OutDir>$(ProjectDir)\..\..\..\build\bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)\..\..\..\external\protocol_buffers\include;$(ProjectDir)\..\..\..\external\glm\include;$(ProjectDir)\..\..\..\external\GLFW\include;$(ProjectDir)\..\..\..\external\devil\include;$(ProjectDir)\..\..\..\external\boost\include;$(ProjectDir)\..\..\..\build\src_generated\player;$(ProjectDir)\..\..\..\common;$(ProjectDir)\..\..\..\build\src_generated;$(ProjectDir)\..\..\src;$(ProjectDir)\..\..\..\external\kyoto_cabinet\include;$(ProjectDir)\..\..\..\external\libsfml\include;$(IncludePath)</IncludePath>
+    <OutDir>$(ProjectDir)\..\..\..\build\bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;DEBUG_OPENGL;_CONSOLE;ENABLE_WIN_MEMORY_LEAK_DETECTION</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\external\protocol_buffers\lib\$(Configuration);$(ProjectDir)\..\..\..\external\GLFW\lib\$(Configuration);$(ProjectDir)\..\..\..\external\devil\lib;$(ProjectDir)\..\..\..\external\kyoto_cabinet\lib\$(Configuration);$(ProjectDir)\..\..\..\external\zlib\lib\$(Configuration);$(ProjectDir)\..\..\..\external\libsfml\lib\$(Configuration);$(ProjectDir)\..\..\..\external\boost\lib\static\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DevIL.lib;GLFW.lib;libprotobuf-lite.lib;OpenGL32.lib;kyotocabinet.lib;zlibstat.lib;sfml-audio-s.lib;sfml-system-s.lib;ILUT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)\..\..\..\external\devil\dll\DevIL.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\devil\dll\ILU.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\devil\dll\ILUT.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\libsfml\dll\libsndfile-1.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\libsfml\dll\openal32.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoMemLeaks|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;DEBUG_OPENGL;_CONSOLE</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\external\protocol_buffers\lib\Debug;$(ProjectDir)\..\..\..\external\GLFW\lib\Debug;$(ProjectDir)\..\..\..\external\devil\lib;$(ProjectDir)\..\..\..\external\kyoto_cabinet\lib\Debug;$(ProjectDir)\..\..\..\external\zlib\lib\Debug;$(ProjectDir)\..\..\..\external\libsfml\lib\Debug;$(ProjectDir)\..\..\..\external\boost\lib\static\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DevIL.lib;GLFW.lib;libprotobuf-lite.lib;OpenGL32.lib;kyotocabinet.lib;zlibstat.lib;sfml-audio-s.lib;sfml-system-s.lib;ILUT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)\..\..\..\external\devil\dll\DevIL.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\devil\dll\ILU.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\devil\dll\ILUT.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\libsfml\dll\libsndfile-1.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\libsfml\dll\openal32.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\external\protocol_buffers\lib\$(Configuration);$(ProjectDir)\..\..\..\external\GLFW\lib\$(Configuration);$(ProjectDir)\..\..\..\external\devil\lib;$(ProjectDir)\..\..\..\external\kyoto_cabinet\lib\$(Configuration);$(ProjectDir)\..\..\..\external\zlib\lib\$(Configuration);$(ProjectDir)\..\..\..\external\libsfml\lib\$(Configuration);$(ProjectDir)\..\..\..\external\boost\lib\static\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DevIL.lib;GLFW.lib;libprotobuf-lite.lib;OpenGL32.lib;kyotocabinet.lib;zlibstat.lib;sfml-audio-s.lib;sfml-system-s.lib;ILUT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)\..\..\..\external\devil\dll\DevIL.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\devil\dll\ILU.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\devil\dll\ILUT.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\libsfml\dll\libsndfile-1.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)
+copy $(ProjectDir)\..\..\..\external\libsfml\dll\openal32.dll  $(ProjectDir)\..\..\..\build\bin\$(Configuration)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\build\src_generated\player\ExtGL.cpp" />
+    <ClCompile Include="..\..\..\build\src_generated\player\format_map.cpp" />
+    <ClCompile Include="..\..\..\build\src_generated\player\RtrPlayerConfig.cpp" />
+    <ClCompile Include="..\..\..\build\src_generated\rtr_format.pb.cc" />
+    <ClCompile Include="..\..\src\AnimEvaluator.cpp" />
+    <ClCompile Include="..\..\src\BoundingVolume.cpp" />
+    <ClCompile Include="..\..\src\Camera.cpp" />
+    <ClCompile Include="..\..\src\DBLoader.cpp" />
+    <ClCompile Include="..\..\src\DustParticles.cpp" />
+    <ClCompile Include="..\..\src\FBO.cpp" />
+    <ClCompile Include="..\..\src\FreeLookController.cpp" />
+    <ClCompile Include="..\..\src\GaussianBlur.cpp" />
+    <ClCompile Include="..\..\src\Geometry.cpp" />
+    <ClCompile Include="..\..\src\Image.cpp" />
+    <ClCompile Include="..\..\src\InputHandler.cpp" />
+    <ClCompile Include="..\..\src\LayerSource.cpp" />
+    <ClCompile Include="..\..\src\Light.cpp" />
+    <ClCompile Include="..\..\src\LooseOctree.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\MaterialManager.cpp" />
+    <ClCompile Include="..\..\src\Mesh.cpp" />
+    <ClCompile Include="..\..\src\mesh_generation.cpp" />
+    <ClCompile Include="..\..\src\ObjectIndex.cpp" />
+    <ClCompile Include="..\..\src\PostProcess.cpp" />
+    <ClCompile Include="..\..\src\Runtime.cpp" />
+    <ClCompile Include="..\..\src\SceneObject.cpp" />
+    <ClCompile Include="..\..\src\Shader.cpp" />
+    <ClCompile Include="..\..\src\SoundController.cpp" />
+    <ClCompile Include="..\..\src\Texture.cpp" />
+    <ClCompile Include="..\..\src\TextureArray.cpp" />
+    <ClCompile Include="..\..\src\Timer.cpp" />
+    <ClCompile Include="..\..\src\Transform.cpp" />
+    <ClCompile Include="..\..\src\UniformBuffer.cpp" />
+    <ClCompile Include="..\..\src\utility.cpp" />
+    <ClCompile Include="..\..\src\Viewport.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\build\src_generated\player\ExtGL.h" />
+    <ClInclude Include="..\..\..\build\src_generated\player\format_map.h" />
+    <ClInclude Include="..\..\..\build\src_generated\player\RtrPlayerConfig.h" />
+    <ClInclude Include="..\..\..\build\src_generated\rtr_format.pb.h" />
+    <ClInclude Include="..\..\src\AnimEvaluator.h" />
+    <ClInclude Include="..\..\src\ArrayAdapter.h" />
+    <ClInclude Include="..\..\src\ArrayAdapter_Definition.h" />
+    <ClInclude Include="..\..\src\BoundingVolume.h" />
+    <ClInclude Include="..\..\src\Camera.h" />
+    <ClInclude Include="..\..\src\common.h" />
+    <ClInclude Include="..\..\src\DBLoader.h" />
+    <ClInclude Include="..\..\src\DustParticles.h" />
+    <ClInclude Include="..\..\src\FBO.h" />
+    <ClInclude Include="..\..\src\FreeLookController.h" />
+    <ClInclude Include="..\..\src\GaussianBlur.h" />
+    <ClInclude Include="..\..\src\Geometry.h" />
+    <ClInclude Include="..\..\src\Image.h" />
+    <ClInclude Include="..\..\src\InputHandler.h" />
+    <ClInclude Include="..\..\src\LayerSource.h" />
+    <ClInclude Include="..\..\src\Light.h" />
+    <ClInclude Include="..\..\src\LooseOctree.h" />
+    <ClInclude Include="..\..\src\MaterialManager.h" />
+    <ClInclude Include="..\..\src\Mesh.h" />
+    <ClInclude Include="..\..\src\mesh_generation.h" />
+    <ClInclude Include="..\..\src\ObjectIndex.h" />
+    <ClInclude Include="..\..\src\PostProcess.h" />
+    <ClInclude Include="..\..\src\roots.h" />
+    <ClInclude Include="..\..\src\Runtime.h" />
+    <ClInclude Include="..\..\src\SceneObject.h" />
+    <ClInclude Include="..\..\src\Shader.h" />
+    <ClInclude Include="..\..\src\SoundController.h" />
+    <ClInclude Include="..\..\src\Texture.h" />
+    <ClInclude Include="..\..\src\TextureArray.h" />
+    <ClInclude Include="..\..\src\Timer.h" />
+    <ClInclude Include="..\..\src\Transform.h" />
+    <ClInclude Include="..\..\src\type_info.h" />
+    <ClInclude Include="..\..\src\UniformBuffer.h" />
+    <ClInclude Include="..\..\src\utility.h" />
+    <ClInclude Include="..\..\src\Viewport.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\material_shaders\BlinnOrenNayar.frag" />
+    <None Include="..\..\material_shaders\BlinnOrenNayar.vert" />
+    <None Include="..\..\material_shaders\Constant.frag" />
+    <None Include="..\..\material_shaders\Constant.vert" />
+    <None Include="..\..\material_shaders\Dusty.frag" />
+    <None Include="..\..\material_shaders\Dusty.vert" />
+    <None Include="..\..\material_shaders\LambertBlinn.frag" />
+    <None Include="..\..\material_shaders\LambertBlinn.vert" />
+    <None Include="..\..\material_shaders\Silk.frag" />
+    <None Include="..\..\material_shaders\Silk.vert" />
+    <None Include="..\..\material_shaders\Standard.frag" />
+    <None Include="..\..\material_shaders\Standard.vert" />
+    <None Include="..\..\material_shaders\Velvet.frag" />
+    <None Include="..\..\material_shaders\Velvet.vert" />
+    <None Include="..\..\player_config.txt" />
+    <None Include="..\..\shaders\calc_coc.frag" />
+    <None Include="..\..\shaders\calc_coc.vert" />
+    <None Include="..\..\shaders\dust.frag" />
+    <None Include="..\..\shaders\dust.geom" />
+    <None Include="..\..\shaders\dust.vert" />
+    <None Include="..\..\shaders\eval_light.glsl" />
+    <None Include="..\..\shaders\horz_blur_array_shader.frag" />
+    <None Include="..\..\shaders\horz_blur_array_shader.vert" />
+    <None Include="..\..\shaders\horz_blur_shader.frag" />
+    <None Include="..\..\shaders\horz_blur_shader.vert" />
+    <None Include="..\..\shaders\line.frag" />
+    <None Include="..\..\shaders\line.vert" />
+    <None Include="..\..\shaders\post_process.frag" />
+    <None Include="..\..\shaders\post_process.vert" />
+    <None Include="..\..\shaders\post_process_dof.frag" />
+    <None Include="..\..\shaders\post_process_dof.vert" />
+    <None Include="..\..\shaders\pre_blur.frag" />
+    <None Include="..\..\shaders\pre_blur.vert" />
+    <None Include="..\..\shaders\shadow.frag" />
+    <None Include="..\..\shaders\shadow.vert" />
+    <None Include="..\..\shaders\shared.glsl" />
+    <None Include="..\..\shaders\shrink.frag" />
+    <None Include="..\..\shaders\shrink.vert" />
+    <None Include="..\..\shaders\shrink_fallback.frag" />
+    <None Include="..\..\shaders\shrink_fallback.vert" />
+    <None Include="..\..\shaders\standard.frag" />
+    <None Include="..\..\shaders\standard.vert" />
+    <None Include="..\..\shaders\transform.glsl" />
+    <None Include="..\..\shaders\vert_blur_shader.frag" />
+    <None Include="..\..\shaders\vert_blur_shader.vert" />
+    <None Include="..\..\src\config.xml" />
+    <None Include="..\..\src\extensions.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

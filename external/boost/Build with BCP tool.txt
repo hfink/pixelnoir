@@ -1,0 +1,7 @@
+This is only a subset of boost, necessary to use boost.smart_ptr, boost.any and boost.unordered_set with boost.hash
+
+It was built with boost.bcp
+
+If you want to add additional parts of boost, you have to use bcp to generate a new source-tree.
+
+See http://www.boost.org/doc/libs/1_44_0/tools/bcp/doc/html/index.html for details.

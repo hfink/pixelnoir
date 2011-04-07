@@ -1,0 +1,46 @@
+The currently shipped OpenCollada is built from a patched version available
+at ssh://hfink.eu/home/rtr/OpenCollada.
+
+=== Windows ===
+
+VS2010 static libs, DLL runtime, in debug and release are included.
+
+=== Linux Build Instructions ===
+
+The static libs shipped with out source tree are built on Ubuntu 10.10 Maverick
+using GCC 4.4.5.
+
+To build it by yourself, 
+ 
+get a custom patched OpenCollada source tree from the GIT repo at 
+
+ssh://hfink.eu/home/rtr/OpenCollada 
+
+You will need to checkout the sid_patch remote branch and build the sources 
+contained in this branch.
+
+I recommend building the lib with the following parameters: 
+
+scons RELEASE=1 LIBDIRNAME=lib/ PCRENATIVE=1 XMLPARSER=libxmlNative
+
+You will also have to install
+
+libpcre3-dev
+libxml2-dev
+
+Note that there are shipped sources of these libraries as well that come with
+the OpenCollada source tree, just in case you have a hard time installing
+the native libs on your system, although using native libs is of course the
+preferred way.
+
+After building you will have to copy these static libs into 
+
+./ColladaBakery/external/OpenCollada/lib/linux : 
+
+libGeneratedSaxParser.a
+libMathMLSolver.a
+libUTF.a
+libOpenCOLLADABaseUtils.a
+libOpenCOLLADAFramework.a
+libOpenCOLLADASaxFrameworkLoader.a
+libOpenCOLLADAStreamWriter.a

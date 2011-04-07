@@ -1,0 +1,30 @@
+<materials>
+
+   <!--<material id="knot-material" shader="Silk"> 
+     <param name="shininess" type="float" value="10"/> 
+     <param name="silk_factor" type="float" value="0.5"/> 
+   </material>--> 
+
+  <material id="knot-material" shader="Velvet">
+    <param name="shininess" type="float" value="4"/>
+    <param name="velvet_factor" type="float" value="2"/>
+  </material>
+
+<material id="equusFELL-material" shader="Silk">
+    <param name="shininess" type="float" value="8"/>
+    <param name="silk_factor" type="float" value="182"/>
+  </material>
+  
+  <material id="vorhangneu-material" shader="Silk">
+    <param name="shininess" type="float" value="8"/>
+    <param name="silk_factor" type="float" value="252"/>
+  </material>
+
+   <!--<material id="bumpy-material" shader="Dusty"> 
+     <param name="shininess" type="float" value="20"/> 
+     <param name="dust_thickness" type="float" value="0.1"/> 
+     <param name="dust_min_angle" type="float" value="0.3"/> 
+     <param name="dust_exponent" type="float" value="0.3"/> 
+     <param name="dust_color" type="vec3" value="0.8 0.8 1"/> 
+   </material>--> 
+</materials>

@@ -1,0 +1,234 @@
+// Width of the window in pixels.
+window_width = 1280
+
+// Height of the window in pixels.
+window_height = 545
+
+// Selects the type of window that shall be created.
+// Either FULLSCREEN or WINDOWED
+window_mode = WINDOWED
+
+// Aspect ratio of the rendered region.
+// The rest of the window will be letterboxed.
+// If aspect_ratio is set to 0, the aspect ratio will always match
+// the window.
+aspect_ratio = 2.35
+
+// The OpenGL clear color.
+clear_color = 0.1 0.1 0.1 1
+
+// The color of the letterboxes.
+letterbox_color = 0 0 0 1
+
+// Controls vertical sync.
+// Specifies the number of screen redraws to wait for during buffer swap.
+// 0 means no vsync.
+swap_interval = 1
+
+// The window title of our program.
+window_title = RTR Demo 2010
+
+// Number of FSAA samples.
+// 0 means no anti-aliasing.
+fsaa_samples = 8
+
+// Controls anisotropic filtering for mipmapped textures.
+// More anisotropy is nicer. max_anisotropic=1.0f disables anisotropic
+// filtering.
+max_anisotropy = 8
+
+// Enables wireframe mode.
+draw_wireframe = false
+
+// Rebuild options file. This is necessary when a new config
+// parameter has been added and we want to add the default value to
+// our options. The application will automatically set this value
+// back to false.
+save_options = false
+
+// This directs the application not to catch the mouse cursor.
+// This is useful while debugging. The freelook camera is
+// controlled by left-dragging on the screen instead.
+mouse_catch = false
+
+// Enables View Frustum culling using a Loose Octree.
+enable_octree_culling = true
+
+// Defines the backend storage as used for the accelerating LooseOctree. In
+// most cases SPARSE_MAP will be the right choice.
+octree_storage_type = SPARSE_MAP
+
+// Enables LooseOctree statistics collection which might be useful to
+// determine the optimal parameters of an octree for a particular scene.
+octree_statistics = false
+
+// Enables LooseOctree debugging mode, where debug information will be
+// collected and displayed. Note that this might have a small performance
+// impact on the performance of the octree.
+octree_debug = false
+
+// If enabled, the bounding geometry of meshes are drawn.
+draw_bounding_geometry = false
+
+// Specify the maximum depth of the accelerating octree. This highly depends
+// on the actual scene.
+octree_max_depth = 13
+
+// Search dir for shader files.
+shader_dir = shaders
+
+// Search dir for material files.
+material_dir = material_shaders
+
+// Search directory for textures that don't depend on assets.
+// (For instance a fallback texture or particle textures.)
+texture_dir = textures
+
+// Enables music playback.
+play_music = true
+
+// Search directory for audio files.
+audio_dir = audio
+
+// The background audio file within the audio directory. This is an option
+// just because its nice to easily swap the background audio without
+// recompiling.
+background_sound = background.ogg
+
+// Print some interesting limits of OpenGL implementation.
+print_gl_limits = false
+
+// Rotation speed of camera in degrees / moved pixel * second.
+freelook_angle_speed = 0.125
+
+// Strafing speed of camers in scene units / second.
+freelook_strafe_speed = 100
+
+// Keys for camera strafing. In the order +X,-X,+Y,-Y,+Z,-Z
+freelook_strafe_keys = DARFSW
+
+// For testing animation we sometimes want to control the offset when
+// animations are started. This is mainly for debugging animation import.
+animation_offset = 0
+
+// Enables depth-of-field post-process effect.
+use_depth_of_field = true
+
+// Normalized blur radius. The diameter of the Depth of Field blur
+// radius in pixel if the screen were 600 pixels tall. This is
+// automatically adjusted to the Window size.
+dof_blur_radius = 2
+
+// Size of the circle of confusion of far objects, relative to the CoC
+// of near objects.
+dof_far_radius = 0.25
+
+// The depth-of-field parameters normalized to depth 100.
+// Those parameters are scaled to fit to other focus depths.
+// They are separated into (near_end, near_start, far_start, far_end).
+// Everything between near_start and far_start is in focus.
+// Maximum blur is reached at near_end and far_end.
+dof_depth_range_100 = 25 98 102 200
+
+// Default focus depth for cameras that don't specify a focus-point.
+dof_default_focus = 50
+
+// Height and width of shadowmaps in pixels. Shadowmaps are always square.
+shadowmap_size = 1024
+
+// Near depth of shadow map volume.
+shadowmap_near = 0.1
+
+// Far depth of shadow map volume.
+shadowmap_far = 400000
+
+// Depth bias of shadow maps.
+shadowmap_bias = 0
+
+// Minimum variance for variance shadowmaps. Improves problems with
+// artifacts.
+shadowmap_min_variance = 0.0001
+
+// Bias factor between 0 and 1. Use this to remove light bleeding
+// artifacts in variance shadowmaps. This darkens the shadow a bit.
+shadowmap_bleed_bias = 0.2
+
+// Blur radius for shadowmap. This value is in pixels, normalized
+// to a shadowmap_size of 512.
+// A blur radius of 0 disables blurring.
+shadowmap_blur_radius = 4
+
+// Factor to enlarge a spotlight's opening angle by for shadow
+// rendering. This is necessary to avoid artifacts from filtered maps.
+shadowmap_spot_angle_factor = 1
+
+// Enables shadowmapping for spot lights.
+use_shadowmaps = true
+
+// Sets the initial height over the render camera for the observer camera.
+observer_cam_height = 30
+
+// Sets an offset where the observer cam is focused along the rendercameras
+// view direction.
+observer_cam_focus_offset = 10
+
+// Center of dust particle volume.
+dust_center = 162 -19.77 -748.82
+
+// Extents of dust particle volume.
+dust_size = 855 402 94
+
+// The number of concurrent particles per dust particle system.
+dust_particle_count = 100000
+
+// The minimum life of a dust particle in seconds.
+dust_min_life = 3
+
+// The maximum life of a dust particle in seconds.
+dust_max_life = 6
+
+// Size of dust particles.
+dust_size_factor = 200
+
+// Dust particle light response factor.
+// Part of light that is reflected.
+dust_light_factor = 14
+
+// Dust particle light response exponent.
+// This changes the contrast of lighted dust particles.
+dust_light_exponent = 1.6
+
+// Dust particle alpha value.
+// Transparency of dust particle.
+dust_particle_alpha = 0.05
+
+// Defines the speed in which the particles fall down to the ground.
+dust_particle_speed = 0.3
+
+// Draw dust volume borders.
+// This allows you to visualize and tweak the particle volume.
+// You can use the keys HKUJTG to move the volume. Hold SHIFT for resize.
+// HL ... move/resize X axis
+// UJ ... move/resize Y axis
+// TG ... move/resize Z axis
+dust_debug = false
+
+// Distortion value for post-process barrel-distortion.
+// A higher value means weaker distortion.
+barrel_distortion = 8
+
+// Set to true to enable an offline renderer mode instead of the default
+// realtime mode. This mode is non-interactive and renders an image
+// sequence that can be used to build a high-quality screencast of the
+// loaded scene.
+offline_render_mode = false
+
+// The length of the shot to be rendered. In seconds.
+offline_render_mode_duration = 270
+
+// The framerate for the offline renderer mode.
+offline_render_mode_fps = 30
+
+// The directory where rendered screens are going to be written to.
+offline_render_mode_output_dir = ./output
+
