@@ -518,6 +518,7 @@ bool VisualSceneProcessor::post_process() {
             string rtr_id = it_geo->resolve_data.c_node_id + "_" 
                             + it_mmp->first + "_instance";
             rtr_geo->set_id( rtr_id );
+            cout << "RTR Geo with: " << rtr_id << std::endl;
             rtr_geo->set_mesh_id(it_mmp->first);
 
             //MaterialId (of mesh) -> ColladaUniqueId -> rtr_material string

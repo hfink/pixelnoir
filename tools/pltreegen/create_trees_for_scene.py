@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# Main script for L system scene generation
+# Main script for PL system scene generation
 
 import os.path
 
@@ -33,23 +33,36 @@ def parse_args():
     parser.add_option("-i", "--incubator",
                       dest="incubator",
                       default="./input.rtr",
-                      help="The incubator scene. *.rtr file.")
+                      help="The incubator scene, i.e. the scene in which " +
+                           "trees will be placed in. Has to be a *.rtr file.")
     parser.add_option("-o", "--output",
                       dest="output",
                       default="./output.rtr",
-                      help="Output file to create including the tree.")
+                      help="Output scene that we will write to.")
     parser.add_option("-c", "--compress",
                       dest="compress",
                       action="store_true",
                       help="If flag is set, output values will be compressed.")
+    parser.add_option("-b", "--bake",
+                      dest="bake",
+                      action="store_true",
+                      help="If flag is set, the turtle interpretation would " +
+                           "rather bake all drawn segments into one geometry, " +
+                           "the whole tree is one mesh, where otherwise each " +
+                           "segment within the tree is just a node with its own " +
+                           "transformation. Use the former for performance and the " +
+                           "latter for benchmark the performance of large " +
+                           "transformation hierarchies.")
     parser.add_option("-s", "--segment",
                       dest="segment",
                       default="./segment.rtr",
-                      help="The scene containing the segment prototype.")
+                      help="The scene containing the segment prototype, i.e. " +
+                           " this is used during the turtle interpretation as " +
+                           " the 'move forward and draw' command.")
     parser.add_option("-k", "--segmentkey",
                       dest="segmentkey",
                       default="segmentShape",
-                      help="The key of the segment in the segement input file.")
+                      help="The key of the segment in the segment input file.")
     parser.add_option("-l", "--startup",
                       dest="startup",
                       default="startup_scene",
@@ -57,7 +70,8 @@ def parse_args():
     parser.add_option("-t", "--types",
                       dest="types",
                       default="",
-                      help="Space separated strings of L system types.")      
+                      help="Space separated strings of L system types. " +
+                           "Currently, these ternarytree_1 to ternarytree_4.")      
     
     return parser.parse_args()
     
@@ -78,7 +92,7 @@ interpreter = TurtleInterpreter(options.incubator,
                                 options.segmentkey,
                                 options.startup,
                                 1,
-                                True)
+                                options.bake)
 
 # Types we have available
 generators = {}

@@ -27,7 +27,10 @@ import numpy as np
 import copy
 
 # We set the path to include the generated rtr_format python files
-sys.path.append(sys.path[0] + os.sep+".."+os.sep+"Debug"+os.sep+"generated")
+sys.path.append(sys.path[0] +
+                os.sep + ".." +
+                os.sep + ".." +
+                os.sep+"build"+os.sep+"src_generated")
 
 import rtr_format_pb2
 from kyotocabinet import *
@@ -62,7 +65,7 @@ class TurtleInterpreter:
                 considered bottom, and vertices z >= 1 are considere top.
                 The first encountered mesh element is used as a prototype
             segment_id:
-                The ID of the mesh which will serve as the line segment
+                The ID of the geometry which will serve as the line segment
                 prototype.
             startup_scene_key:
                 The key to a string that defines the scene to write into.
@@ -72,6 +75,13 @@ class TurtleInterpreter:
                 (usually this is "startup_scene").
             dim_scale: A scale parameter which allows to scale all dimensional
                  parameters of turtle parameters to a certain amount.
+            bake_segments: If set, each 'draw and move' command is merged into one geometry
+                object. Otherwise, each draw command is recorded hierarchically
+                as transformations that instantiate the same small segment
+                object. Merged geometry batches are usually preferred for better
+                rendering performance while using large transformation trees
+                might be interesting to benchmark deep trannsformation trees or
+                to benchmark view frustum culling.
         """
         self.__output_file = output_file
         self.__compress_output = compress_output
@@ -107,7 +117,29 @@ class TurtleInterpreter:
 
         # Get the segment element, convert to Mesh, and save
 
-        line_mesh_data = db.get("segmentShape")
+        startup_scene_sgm_name = db.get(startup_scene_key)
+        if not startup_scene_sgm_name:
+            raise RuntimeError("Get error: " + str(db.error()))
+
+        startup_scene_sgm_ndata = db.get(startup_scene_sgm_name)
+        if not startup_scene_sgm_ndata:
+            raise RuntimeError("Get error: " + str(db.error()))
+
+        scene_sgm = rtr_format_pb2.Scene()
+        scene_sgm.ParseFromString(startup_scene_sgm_ndata)
+
+        line_geometry = None
+
+        for g in scene_sgm.geometry:
+            if g.id == segment_id:
+               line_geometry = g
+
+        if not line_geometry:
+            raise RuntimeError("Could not find segment within scene.")
+
+        self._segment_material = line_geometry.material_id
+
+        line_mesh_data = db.get(line_geometry.mesh_id)
         if not line_mesh_data:
             raise RuntimeError("Could not get segment:" + str(db.error()))
 
@@ -119,6 +151,7 @@ class TurtleInterpreter:
         # We extract only vertices, normals and texture coordinates (#1)
         self._line_mesh_vtx_lyr = rtr_format_pb2.LayerSource()
         self._line_mesh_nml_lyr = rtr_format_pb2.LayerSource()
+        self._line_mesh_tng_lyr = rtr_format_pb2.LayerSource()        
         self._line_mesh_tex_lyr = rtr_format_pb2.LayerSource()
         
         for layer in line_mesh.layer:
@@ -149,6 +182,19 @@ class TurtleInterpreter:
                     raise RuntimeError("Could not get normal layer data!")
                     
                 self._line_mesh_nml_lyr.ParseFromString(lyr_data)
+
+            if (layer.name == "tangent"):
+                if (layer.num_components != 4):
+                    print(layer.num_components)
+                    raise RuntimeError("Error: tng has to have 4 components.")
+                if (layer.source_index != 0):
+                    raise RuntimeError("Error: expecting source index to be "+
+                                       "zero.")
+                lyr_data = db.get(layer.source)
+                if not lyr_data:
+                    raise RuntimeError("Could not get tangent layer data!")
+                    
+                self._line_mesh_tng_lyr.ParseFromString(lyr_data)                
                 
             if (layer.name == "tex_coord"):
                 if (layer.num_components != 2):
@@ -169,16 +215,15 @@ class TurtleInterpreter:
             raise RuntimeError("Error: prototype layers of segment are "
                                +"not completely loaded!")
 
-        # TODO: this restriction could be made less strict
-        if len(line_mesh.layer) != 3:
-            raise RuntimeError("Error: Line mesh must have only 3 vertex attrs.")
+        if len(line_mesh.layer) != 8:
+            raise RuntimeError("Error: We expect the mesh to have 8 attributes.")
 
         self._mesh_variations = {}
         self._mesh_variations[(1, 1, 1)] = [line_mesh,
                                             self._line_mesh_vtx_lyr,
                                             self._line_mesh_nml_lyr,
+                                            self._line_mesh_tng_lyr,
                                             self._line_mesh_tex_lyr]
-
 
         # done loading the prototype segment element
         if not db.close():
@@ -223,6 +268,10 @@ class TurtleInterpreter:
                       self._line_mesh_nml_lyr.SerializeToString()):
             raise RuntimeError("Get error: " + str(db.error()))
 
+        if not db.set(self._line_mesh_tng_lyr.id,
+                      self._line_mesh_tng_lyr.SerializeToString()):
+            raise RuntimeError("Get error: " + str(db.error()))        
+
         if not db.set(self._line_mesh_tex_lyr.id,
                       self._line_mesh_tex_lyr.SerializeToString()):
             raise RuntimeError("Get error: " + str(db.error()))        
@@ -232,7 +281,7 @@ class TurtleInterpreter:
             raise RuntimeError("Get error: " + str(db.error())) 
 
         # load our destination scene
-
+        
         startup_scene_name = db.get(startup_scene_key)
         if not startup_scene_name:
             raise RuntimeError("Get error: " + str(db.error()))
@@ -249,6 +298,37 @@ class TurtleInterpreter:
         
         # Done with initialization
 
+    def _get_bounding_sphere(self, vtx):
+    
+        aabb_min = np.array([np.inf, np.inf, np.inf])
+        aabb_max = np.array([-np.inf, -np.inf, -np.inf])
+        centroid = np.array([0, 0, 0])
+        
+        for x, y, z in zip(vtx[::3], vtx[1::3],vtx[2::3]):
+            vtx_arr = np.array([x, y, z])
+            centroid = np.add(centroid, vtx_arr)
+            aabb_min = np.minimum(aabb_min, vtx_arr)
+            aabb_max = np.maximum(aabb_max, vtx_arr)
+
+        size_inv = 1.0/(len(vtx)/3)
+        centroid = np.multiply(centroid, np.array([size_inv,
+                                                   size_inv,
+                                                   size_inv]))
+
+        center_x = centroid[0]
+        center_y = centroid[1]
+        center_z = centroid[2]
+        radius = 0
+
+        for x, y, z in zip(vtx[::3], vtx[1::3],vtx[2::3]):
+            vtx_arr = np.array([x, y, z])
+            dist_vec = vtx_arr - centroid
+            length = np.sqrt(np.inner(dist_vec, dist_vec))
+            if (length > radius):
+                radius = length
+
+        return [center_x, center_y, center_z, radius]
+        
     def _get_mesh_variation(self, length, width, previous_width):
         """ Generates mesh variations on demand.
 
@@ -259,11 +339,11 @@ class TurtleInterpreter:
         key = (length, width, previous_width)
         if key not in self._mesh_variations: # generate new variation
             new_mesh = rtr_format_pb2.Mesh()
-            # we also need to create three new layers
+            # we also need to create four new layers
             # and knit them together
             unique_id = "line_mesh_var_"+str(len(self._scene.geometry))
             # copy from proto type
-            new_mesh.CopyFrom(self._mesh_variations[(1,1, 1)][0])
+            new_mesh.CopyFrom(self._mesh_variations[(1, 1, 1)][0])
 
             new_mesh.id = unique_id
             # remove old layer references
@@ -282,6 +362,9 @@ class TurtleInterpreter:
             vtx_att_lyr.num_components = 3
             vtx_att_lyr.source_index = 0
 
+            # TODO: instead of creating the layers individually, use the
+            # the prototype and extract the to-be-modified layers from there
+
             # Create new normal layer
             
             nml_lyr = rtr_format_pb2.LayerSource()
@@ -295,6 +378,19 @@ class TurtleInterpreter:
             nml_att_lyr.num_components = 3
             nml_att_lyr.source_index = 0
 
+            # Create new tangent layer
+            
+            tng_lyr = rtr_format_pb2.LayerSource()
+            tng_lyr.CopyFrom(self._line_mesh_tng_lyr)
+            tng_lyr.id = unique_id + "_tng_layer"
+            del(tng_lyr.float_data[:])
+
+            tng_att_lyr = new_mesh.layer.add()
+            tng_att_lyr.name = "tangent"
+            tng_att_lyr.source = tng_lyr.id
+            tng_att_lyr.num_components = 4
+            tng_att_lyr.source_index = 0            
+
             # Create new tex layer
             # TODO: deal with tex layer properly
             tex_lyr = rtr_format_pb2.LayerSource()
@@ -302,32 +398,71 @@ class TurtleInterpreter:
             tex_lyr.id = unique_id + "_tex_layer"
             del(tex_lyr.float_data[:])
 
+            # We use the same uv coords for all layers currently
+            # supported by the materials
+            
             tex_att_lyr = new_mesh.layer.add()
-            tex_att_lyr.name = "tex_coord"
+            tex_att_lyr.name = "uv_diffuse"
             tex_att_lyr.source = tex_lyr.id
             tex_att_lyr.num_components = 2
             tex_att_lyr.source_index = 0            
+
+            tex_att_lyr = new_mesh.layer.add()
+            tex_att_lyr.name = "uv_specular"
+            tex_att_lyr.source = tex_lyr.id
+            tex_att_lyr.num_components = 2
+            tex_att_lyr.source_index = 0
+
+            tex_att_lyr = new_mesh.layer.add()
+            tex_att_lyr.name = "uv_normalmap"
+            tex_att_lyr.source = tex_lyr.id
+            tex_att_lyr.num_components = 2
+            tex_att_lyr.source_index = 0
+
+            tex_att_lyr = new_mesh.layer.add()
+            tex_att_lyr.name = "uv_ambientmap"
+            tex_att_lyr.source = tex_lyr.id
+            tex_att_lyr.num_components = 2
+            tex_att_lyr.source_index = 0             
 
             length_inv = 1/length
             
             vtx = self._line_mesh_vtx_lyr.float_data
             nml = self._line_mesh_nml_lyr.float_data
+            tng = self._line_mesh_tng_lyr.float_data
             tex = self._line_mesh_tex_lyr.float_data
+
+            # for each variation, we need to recalculate the
+            # bounding sphere
             
-            for x, y, z, xn, yn, zn, r, s in zip(vtx[::3],vtx[1::3],vtx[2::3],
-                                                 nml[::3],nml[1::3],nml[2::3],
-                                                 tex[::2],tex[1::2]):
+            for x, y, z, xn, yn, zn, xt, yt, zt, wt, r, s in zip(vtx[::3],
+                                                                 vtx[1::3],
+                                                                 vtx[2::3],
+                                                                 nml[::3],
+                                                                 nml[1::3],
+                                                                 nml[2::3],
+                                                                 tng[::4],
+                                                                 tng[1::4],
+                                                                 tng[2::4],
+                                                                 tng[3::4],
+                                                                 tex[::2],
+                                                                 tex[1::2]):
                 scale_factor = (1-z)*previous_width + z*width
-                vtx_lyr.float_data.append(x*scale_factor)
-                vtx_lyr.float_data.append(y*scale_factor)
+                x_new = x*scale_factor
+                y_new = y*scale_factor
+                vtx_lyr.float_data.append(x_new)
+                vtx_lyr.float_data.append(y_new)
                 z_new = 0
                 zn_new = 0
+                zt_new = 0
                 if z <= 1:
                     z_new = z*length
                     zn_new= zn*length_inv
+                    zt_new = zt*length_inv
                 else:
                     z_new = (z - 1)*width+length
                     zn_new = zn
+                    zt_new = zt
                 vtx_lyr.float_data.append(z_new)
 
                 scale_factor_inv = 1/scale_factor
@@ -335,9 +470,20 @@ class TurtleInterpreter:
                 nml_lyr.float_data.append(yn*scale_factor_inv)
                 nml_lyr.float_data.append(zn_new)
 
+                tng_lyr.float_data.append(xt*scale_factor_inv)
+                tng_lyr.float_data.append(yt*scale_factor_inv)
+                tng_lyr.float_data.append(zt_new)
+                tng_lyr.float_data.append(wt)
+
                 tex_lyr.float_data.append(r)
                 tex_lyr.float_data.append(s*length)
-
+                
+            [ctr_x, ctr_y, ctr_z, r] = self._get_bounding_sphere(vtx)
+            new_mesh.bounding_sphere.center_x = ctr_x
+            new_mesh.bounding_sphere.center_y = ctr_y
+            new_mesh.bounding_sphere.center_z = ctr_z
+            new_mesh.bounding_sphere.radius = r                        
+            
             # Write everything to db
             if not self._db.set(new_mesh.id, new_mesh.SerializeToString()):
                 raise RuntimeError("Error: could not serialize new mesh.")
@@ -347,11 +493,18 @@ class TurtleInterpreter:
 
             if not self._db.set(nml_lyr.id, nml_lyr.SerializeToString()):
                 raise RuntimeError("Error: could not serialize new nml layer.")
+
+            if not self._db.set(tng_lyr.id, tng_lyr.SerializeToString()):
+                raise RuntimeError("Error: could not serialize new tng layer.")            
                 
             if not self._db.set(tex_lyr.id, tex_lyr.SerializeToString()):
                 raise RuntimeError("Error: could not serialize new tex layer.")            
 
-            self._mesh_variations[key] = [new_mesh, vtx_lyr, nml_lyr, tex_lyr]
+            self._mesh_variations[key] = [new_mesh,
+                                          vtx_lyr,
+                                          nml_lyr,
+                                          tng_lyr,
+                                          tex_lyr]
         
         return self._mesh_variations[key]
 
@@ -381,16 +534,26 @@ class TurtleInterpreter:
 
             vtx = lookup[1].float_data
             nml = lookup[2].float_data
-            tex = lookup[3].float_data
+            tng = lookup[3].float_data
+            tex = lookup[4].float_data
 
             # Get the current matrix and calculate the proper normal
             # matrix
 
             model_m = self._current_state.turtle_matrix;
             
-            for x, y, z, xn, yn, zn, r, s in zip(vtx[::3],vtx[1::3],vtx[2::3],
-                                                 nml[::3],nml[1::3],nml[2::3],
-                                                 tex[::2],tex[1::2]):
+            for x, y, z, xn, yn, zn, xt, yt, zt, wt, r, s in zip(vtx[::3],
+                                                                 vtx[1::3],
+                                                                 vtx[2::3],
+                                                                 nml[::3],
+                                                                 nml[1::3],
+                                                                 nml[2::3],
+                                                                 tng[::4],
+                                                                 tng[1::4],
+                                                                 tng[2::4],
+                                                                 tng[3::4],
+                                                                 tex[::2],
+                                                                 tex[1::2]):
 
                 t_vtx = model_m * np.array([[x], [y], [z], [1]])
                 self._bake_vtx_lyr.float_data.append(t_vtx[0,0])
@@ -402,6 +565,12 @@ class TurtleInterpreter:
                 self._bake_nml_lyr.float_data.append(t_nml[1,0])
                 self._bake_nml_lyr.float_data.append(t_nml[2,0])
 
+                t_tng = rot_only * np.array([[xt], [yt], [zt]])
+                self._bake_tng_lyr.float_data.append(t_tng[0,0])
+                self._bake_tng_lyr.float_data.append(t_tng[1,0])
+                self._bake_tng_lyr.float_data.append(t_tng[2,0])
+                self._bake_tng_lyr.float_data.append(wt) 
+
                 self._bake_tex_lyr.float_data.append(r)
                 self._bake_tex_lyr.float_data.append(s)
 
@@ -410,14 +579,22 @@ class TurtleInterpreter:
             offset = len(self._bake_mesh.index_data) / len(indices)
             vtx_length = len(vtx)/3
             nml_length = len(nml)/3
+            tng_length = len(tng)/4
             tex_length = len(tex)/2
 
-            for idx_vtx, idx_nml, idx_tex in zip(indices[::3],
-                                                 indices[1::3],
-                                                 indices[2::3]):
+            for idx_vtx, idx_nml, idx_tng, idx_tex in zip(indices[::8],
+                                                          indices[1::8],
+                                                          indices[2::8],
+                                                          indices[3::8]):
                 self._bake_mesh.index_data.append(idx_vtx + offset*vtx_length)
                 self._bake_mesh.index_data.append(idx_nml + offset*nml_length)
-                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)    
+                self._bake_mesh.index_data.append(idx_tng + offset*tng_length)
+                # We force using the same coordinates for all 4 tex layers
+                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)
+                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)
+                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)
+                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)
+                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)
 
             self._bake_mesh.vertex_count = self._bake_mesh.vertex_count + vtx_length
             
@@ -453,7 +630,7 @@ class TurtleInterpreter:
             segment = self._scene.geometry.add()
             segment.id = "line_instance_"+id_cnt
             segment.transform_node = plc_node.id
-            segment.material_id = "BON1"
+            segment.material_id = self._segment_material
             segment.mesh_id = lookup_mesh.id            
        
 
@@ -709,6 +886,18 @@ class TurtleInterpreter:
                     self._turtle_commands[cmd]()
 
             if self._bake_segments:
+
+                # recalculate bounding sphere before writing out
+                [ctr_x,
+                 ctr_y,
+                 ctr_z,
+                 r] = self._get_bounding_sphere(self._bake_vtx_lyr.float_data)
+                
+                self._bake_mesh.bounding_sphere.center_x = ctr_x
+                self._bake_mesh.bounding_sphere.center_y = ctr_y
+                self._bake_mesh.bounding_sphere.center_z = ctr_z
+                self._bake_mesh.bounding_sphere.radius = r 
+                
                 if not self._db.set(self._bake_mesh.id,
                                     self._bake_mesh.SerializeToString()):
                     raise RuntimeError("Error: could not serialize new mesh.")
@@ -720,6 +909,10 @@ class TurtleInterpreter:
                 if not self._db.set(self._bake_nml_lyr.id,
                                     self._bake_nml_lyr.SerializeToString()):
                     raise RuntimeError("Error: could not serialize new nml layer.")
+
+                if not self._db.set(self._bake_tng_lyr.id,
+                                    self._bake_tng_lyr.SerializeToString()):
+                    raise RuntimeError("Error: could not serialize new tng layer.")
                     
                 if not self._db.set(self._bake_tex_lyr.id,
                                     self._bake_tex_lyr.SerializeToString()):
@@ -801,6 +994,18 @@ class TurtleInterpreter:
         nml_att_lyr.num_components = 3
         nml_att_lyr.source_index = 0
 
+        # Create new tangent layer
+        
+        tng_lyr = rtr_format_pb2.LayerSource()
+        tng_lyr.id = unique_id + "_tng_layer"
+        tng_lyr.type = nml_lyr.FLOAT
+
+        tng_att_lyr = new_mesh.layer.add()
+        tng_att_lyr.name = "tangent"
+        tng_att_lyr.source = tng_lyr.id
+        tng_att_lyr.num_components = 4
+        tng_att_lyr.source_index = 0        
+
         # Create new tex layer
         # TODO: deal with tex layer properly
         tex_lyr = rtr_format_pb2.LayerSource()
@@ -808,21 +1013,40 @@ class TurtleInterpreter:
         tex_lyr.type = tex_lyr.FLOAT
 
         tex_att_lyr = new_mesh.layer.add()
-        tex_att_lyr.name = "tex_coord"
+        tex_att_lyr.name = "uv_diffuse"
+        tex_att_lyr.source = tex_lyr.id
+        tex_att_lyr.num_components = 2
+        tex_att_lyr.source_index = 0            
+
+        tex_att_lyr = new_mesh.layer.add()
+        tex_att_lyr.name = "uv_specular"
         tex_att_lyr.source = tex_lyr.id
         tex_att_lyr.num_components = 2
         tex_att_lyr.source_index = 0
+
+        tex_att_lyr = new_mesh.layer.add()
+        tex_att_lyr.name = "uv_normalmap"
+        tex_att_lyr.source = tex_lyr.id
+        tex_att_lyr.num_components = 2
+        tex_att_lyr.source_index = 0
+
+        tex_att_lyr = new_mesh.layer.add()
+        tex_att_lyr.name = "uv_ambientmap"
+        tex_att_lyr.source = tex_lyr.id
+        tex_att_lyr.num_components = 2
+        tex_att_lyr.source_index = 0  
 
         # Create the geometry node
         self._bake_geometry = self._scene.geometry.add()
         id_cnt = str(len(self._scene.geometry))
         self._bake_geometry.id = "bake_tree_"+id_cnt
-        self._bake_geometry.material_id = "BON1"
+        self._bake_geometry.material_id = self._segment_material
         self._bake_geometry.mesh_id = new_mesh.id
 
         self._bake_mesh = new_mesh
         self._bake_vtx_lyr = vtx_lyr
         self._bake_nml_lyr = nml_lyr
+        self._bake_tng_lyr = tng_lyr
         self._bake_tex_lyr = tex_lyr
 
 # Helper class to wrap the turtle state
