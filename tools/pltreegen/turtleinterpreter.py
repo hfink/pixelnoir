@@ -149,13 +149,43 @@ class TurtleInterpreter:
 
         # Extract the layer data of the segment prototype
         # We extract only vertices, normals and texture coordinates (#1)
-        self._line_mesh_vtx_lyr = rtr_format_pb2.LayerSource()
-        self._line_mesh_nml_lyr = rtr_format_pb2.LayerSource()
-        self._line_mesh_tng_lyr = rtr_format_pb2.LayerSource()        
-        self._line_mesh_tex_lyr = rtr_format_pb2.LayerSource()
+        self._line_mesh_vtx_lyr = None
+        self._line_mesh_nml_lyr = None
+        self._line_mesh_tng_lyr = None        
+        self._line_mesh_tex_lyr = None
+
+        self._line_mesh_layer_size = None
+        self._line_mesh_layer_sources = {}
         
         for layer in line_mesh.layer:
+        
+            lyr_source_data = db.get(layer.source)
+            if not lyr_source_data:
+                raise RuntimeError("Could not get layer data!")
+
+            lyr_source = rtr_format_pb2.LayerSource()
+            lyr_source.ParseFromString(lyr_source_data)
+
+            data_source = None;
+            if lyr_source.type == lyr_source.FLOAT:
+                data_source = lyr_source.float_data
+            elif lyr_source.type == lyr_source.INT32:
+                data_source = lyr_source.int_data
+            else:
+                raise RuntimeError("Unexpected layer type.")
+            
+            num_elements = len(data_source)/layer.num_components
+
+            if not self._line_mesh_layer_size:
+                self._line_mesh_layer_size = num_elements
+            else:
+                if (num_elements != self._line_mesh_layer_size):
+                    raise RuntimeError("Integrity error of layer sources.")
+            
+            self._line_mesh_layer_sources[lyr_source.id] = lyr_source
+            
             if (layer.name == "vertex"):
+ 
                 if (layer.num_components != 3):
                     raise RuntimeError("Error: Vtx Layer"+
                                        " has to have 3 components.")
@@ -163,13 +193,8 @@ class TurtleInterpreter:
                 if (layer.source_index != 0):
                     raise RuntimeError("Error: expecting source index "+
                                        "to be zero.")
-                
-                lyr_data = db.get(layer.source)
-                
-                if not lyr_data:
-                    raise RuntimeError("Could not get vertex layer data!")
-                    
-                self._line_mesh_vtx_lyr.ParseFromString(lyr_data)
+            
+                self._line_mesh_vtx_lyr = lyr_source
                 
             if (layer.name == "normal"):
                 if (layer.num_components != 3):
@@ -177,11 +202,8 @@ class TurtleInterpreter:
                 if (layer.source_index != 0):
                     raise RuntimeError("Error: expecting source index to be "+
                                        "zero.")
-                lyr_data = db.get(layer.source)
-                if not lyr_data:
-                    raise RuntimeError("Could not get normal layer data!")
                     
-                self._line_mesh_nml_lyr.ParseFromString(lyr_data)
+                self._line_mesh_nml_lyr = lyr_source
 
             if (layer.name == "tangent"):
                 if (layer.num_components != 4):
@@ -190,11 +212,8 @@ class TurtleInterpreter:
                 if (layer.source_index != 0):
                     raise RuntimeError("Error: expecting source index to be "+
                                        "zero.")
-                lyr_data = db.get(layer.source)
-                if not lyr_data:
-                    raise RuntimeError("Could not get tangent layer data!")
                     
-                self._line_mesh_tng_lyr.ParseFromString(lyr_data)                
+                self._line_mesh_tng_lyr = lyr_source                
                 
             if (layer.name == "tex_coord"):
                 if (layer.num_components != 2):
@@ -202,15 +221,13 @@ class TurtleInterpreter:
                 if (layer.source_index != 0):
                     raise RuntimeError("Error: expecting source index to be "
                                        +"zero.")
-                lyr_data = db.get(layer.source)
-                if not lyr_data:
-                    raise RuntimeError("Could not texture layer data!")
                     
-                self._line_mesh_tex_lyr.ParseFromString(lyr_data)
+                self._line_mesh_tex_lyr = lyr_source
         
 
         if not (self._line_mesh_vtx_lyr and
                 self._line_mesh_nml_lyr and
+                self._line_mesh_tng_lyr and
                 self._line_mesh_tex_lyr):
             raise RuntimeError("Error: prototype layers of segment are "
                                +"not completely loaded!")
@@ -298,6 +315,9 @@ class TurtleInterpreter:
         
         # Done with initialization
 
+    # Note that this implementatino would not work for segment where geometry
+    # is shared across several data sources (we would have to solve the
+    # index indirection in here)
     def _get_bounding_sphere(self, vtx):
     
         aabb_min = np.array([np.inf, np.inf, np.inf])
@@ -431,9 +451,6 @@ class TurtleInterpreter:
             nml = self._line_mesh_nml_lyr.float_data
             tng = self._line_mesh_tng_lyr.float_data
             tex = self._line_mesh_tex_lyr.float_data
-
-            # for each variation, we need to recalculate the
-            # bounding sphere
             
             for x, y, z, xn, yn, zn, xt, yt, zt, wt, r, s in zip(vtx[::3],
                                                                  vtx[1::3],
@@ -478,7 +495,7 @@ class TurtleInterpreter:
                 tex_lyr.float_data.append(r)
                 tex_lyr.float_data.append(s*length)
                 
-            [ctr_x, ctr_y, ctr_z, r] = self._get_bounding_sphere(vtx)
+            [ctr_x, ctr_y, ctr_z, r] = self._get_bounding_sphere(vtx_lyr.float_data)
             new_mesh.bounding_sphere.center_x = ctr_x
             new_mesh.bounding_sphere.center_y = ctr_y
             new_mesh.bounding_sphere.center_z = ctr_z
@@ -574,29 +591,31 @@ class TurtleInterpreter:
                 self._bake_tex_lyr.float_data.append(r)
                 self._bake_tex_lyr.float_data.append(s)
 
+            # for all layers, which we do not modify, because we ignore them,
+            # we still need to make sure their data gets copied
+            # this is a bit hacky, it assumes that our segment shape geometry is
+            # not really complex (not submeshes reference the same geometry data)
+            was_padded = {}
+            num_layers = len(self._bake_mesh.layer)
+            for idx_layer in range(num_layers):
+                if not self._bake_layer_gets_modified[idx_layer]:
+                    layer = self._bake_mesh.layer[idx_layer]
+                    layer_src = self._line_mesh_layer_sources[layer.source]
+                    if not layer.source in was_padded:
+                        for i in range(self._line_mesh_layer_size*layer.num_components):
+                            layer_src.float_data.append(layer_src.float_data[i])
+                        was_padded[layer.source] = True
+
             # update the index data
             indices = self._mesh_variations[(1, 1, 1)][0].index_data
+            vtx_cnt = len(indices)
             offset = len(self._bake_mesh.index_data) / len(indices)
-            vtx_length = len(vtx)/3
-            nml_length = len(nml)/3
-            tng_length = len(tng)/4
-            tex_length = len(tex)/2
+            
+            for idx_vtx in range(vtx_cnt):
+                index = indices[idx_vtx]
+                self._bake_mesh.index_data.append(index + offset*self._line_mesh_layer_size)
 
-            for idx_vtx, idx_nml, idx_tng, idx_tex in zip(indices[::8],
-                                                          indices[1::8],
-                                                          indices[2::8],
-                                                          indices[3::8]):
-                self._bake_mesh.index_data.append(idx_vtx + offset*vtx_length)
-                self._bake_mesh.index_data.append(idx_nml + offset*nml_length)
-                self._bake_mesh.index_data.append(idx_tng + offset*tng_length)
-                # We force using the same coordinates for all 4 tex layers
-                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)
-                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)
-                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)
-                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)
-                self._bake_mesh.index_data.append(idx_tex + offset*tex_length)
-
-            self._bake_mesh.vertex_count = self._bake_mesh.vertex_count + vtx_length
+            self._bake_mesh.vertex_count = self._bake_mesh.vertex_count + offset*vtx_cnt
             
         else:
 
@@ -632,16 +651,6 @@ class TurtleInterpreter:
             segment.transform_node = plc_node.id
             segment.material_id = self._segment_material
             segment.mesh_id = lookup_mesh.id            
-       
-
-            # Before actually moving forward (or doing any other re-orientation of
-            # the turtle), we need to create a new node
-            # or else previous set meshes will be modified, too.
-##           fwd_node = self._scene.node.add()
-##            fwd_node.id= "fwd_node_" + str(len(self._scene.node))
-##            fwd_node.dependency = self._current_state.transform_node.id
-##            self._current_state.transform_node = fwd_node
-
         
         # line was set, move forward
         # print("forward_draw:"+str(length))
@@ -676,38 +685,12 @@ class TurtleInterpreter:
         tropism_matrix = self.__rotate_matrix(local_rotate_axis, adjustment_angle_deg)
         self._current_state.turtle_matrix = c * tropism_matrix
 
-        # apply locally to scene
-##        """if not self._bake_segments:
-##            node = self._current_state.transform_node
-##            rt_trafo = node.transform.add()
-##            rt_trafo.type = rtr_format_pb2.Transform.ROTATE
-##            rt_trafo.id = node.id+"_rotate_trop_"+str(len(node.transform))
-##
-##            axis_n = local_rotate_axis / np.linalg.norm(local_rotate_axis)
-##            rt_trafo.rotate.axis.x = axis_n[0][0]
-##            rt_trafo.rotate.axis.y = axis_n[0][1]
-##            rt_trafo.rotate.axis.z = axis_n[0][2]
-##            rt_trafo.rotate.angle = adjustment_angle_deg"""
-
         # memorize this line width
         self._current_state.previous_line_width = self._current_state.line_width        
 
     def forward(self, length):
 ##        """f(l) ... move forward, i.e. add a translate operation to the
 ##        current transform."""
-        
-        # print("forward:"+str(length))
-
-        # Apply locally
-##        """
-##        if not self._bake_segments:
-##            node = self._current_state.transform_node
-##            fwd_trafo = node.transform.add()
-##            fwd_trafo.type = rtr_format_pb2.Transform.TRANSLATE
-##            fwd_trafo.id = node.id+"_translate_"+str(len(node.transform))
-##            fwd_trafo.translate.value.x = 0
-##            fwd_trafo.translate.value.y = 0
-##            fwd_trafo.translate.value.z = length*self.dim_scale"""
 
         # Apply to turtle matrix
         fwd_m = np.matrix([[1, 0, 0, 0],
@@ -723,18 +706,6 @@ class TurtleInterpreter:
         """Interpretation of /(a). Rotate around local Z.
 
         Local Z equals the H axis of the turtle."""
-        
-        # print("rotate_z:"+str(angle))
-##        """
-##        if not self._bake_segments:
-##            node = self._current_state.transform_node
-##            rt_trafo = node.transform.add()
-##            rt_trafo.type = rtr_format_pb2.Transform.ROTATE
-##            rt_trafo.id = node.id+"_rotate_z_"+str(len(node.transform))
-##            rt_trafo.rotate.axis.x = 0
-##            rt_trafo.rotate.axis.y = 0
-##            rt_trafo.rotate.axis.z = 1
-##            rt_trafo.rotate.angle = angle"""
 
         # also modify the current matrix
         c = self._current_state.turtle_matrix
@@ -745,18 +716,6 @@ class TurtleInterpreter:
         """Interpretation of +(a). Rotate around local Y.
 
         Local Y equals the U axis of the turtle."""
-        # print("rotate_y:"+str(angle))
-##        """
-##        if not self._bake_segments:
-##            node = self._current_state.transform_node
-##            rt_trafo = node.transform.add()
-##            rt_trafo.type = rtr_format_pb2.Transform.ROTATE
-##            rt_trafo.id = node.id+"_rotate_y_"+str(len(node.transform))
-##            rt_trafo.rotate.axis.x = 0
-##            rt_trafo.rotate.axis.y = 1
-##            rt_trafo.rotate.axis.z = 0
-##            rt_trafo.rotate.angle = angle
-##        """
         # also modify the current matrix
         c = self._current_state.turtle_matrix
         rot_mat = self.__rotate_matrix([[0, 1, 0]], angle)
@@ -766,18 +725,7 @@ class TurtleInterpreter:
         """Interpretation of &(a). Rotate around local X.
 
         Local X equals the L axis of the turtle."""
-        # print("rotate_x:"+str(angle))
-##        """
-##        if not self._bake_segments:
-##            node = self._current_state.transform_node
-##            rt_trafo = node.transform.add()
-##            rt_trafo.type = rtr_format_pb2.Transform.ROTATE
-##            rt_trafo.id = node.id+"_rotate_x_"+str(len(node.transform))
-##            rt_trafo.rotate.axis.x = 1
-##            rt_trafo.rotate.axis.y = 0
-##            rt_trafo.rotate.axis.z = 0
-##            rt_trafo.rotate.angle = angle
-##"""
+
         # also modify the current matrix
         c = self._current_state.turtle_matrix
         rot_mat = self.__rotate_matrix([[1, 0, 0]], angle)
@@ -796,12 +744,6 @@ class TurtleInterpreter:
         # Note: for local transform building, we need to create an
         # extra node per branch or else dependencies would not be
         # handled correctly
-##        """
-##        if not self._bake_segments:
-##            branch_node = self._scene.node.add()
-##            branch_node.id= "start_branch_node_" + str(len(self._scene.node))
-##            branch_node.dependency = self._current_state.transform_node.id
-##            """
 
         self._state_stack.append(copy.copy(self._current_state))
 
@@ -816,13 +758,7 @@ class TurtleInterpreter:
 
         # we also have to add another node, since following
         # direction changes of the turtle must not influence previous transforms
-##        """
-##        if not self._bake_segments:
-##            branch_node = self._scene.node.add()
-##            branch_node.id= "complete_branch_node_" + str(len(self._scene.node))
-##            branch_node.dependency = self._current_state.transform_node.id
-##            self._current_state.transform_node = branch_node
-##        """
+
     def interpret(self,
                   lstring,
                   spawn_points_prefix,
@@ -897,7 +833,7 @@ class TurtleInterpreter:
                 self._bake_mesh.bounding_sphere.center_y = ctr_y
                 self._bake_mesh.bounding_sphere.center_z = ctr_z
                 self._bake_mesh.bounding_sphere.radius = r 
-                
+
                 if not self._db.set(self._bake_mesh.id,
                                     self._bake_mesh.SerializeToString()):
                     raise RuntimeError("Error: could not serialize new mesh.")
@@ -917,6 +853,13 @@ class TurtleInterpreter:
                 if not self._db.set(self._bake_tex_lyr.id,
                                     self._bake_tex_lyr.SerializeToString()):
                     raise RuntimeError("Error: could not serialize new tex layer.")
+
+                for layer in self._bake_mesh.layer:
+                    if not self._db.get(layer.source):
+                        if not self._db.set(layer.source,
+                                            self._line_mesh_layer_sources[layer.source].SerializeToString()):
+                            raise RuntimeError("Error: could not write to DB.")
+                        
             
         # Print out how many segments we generated
         print("Generated " + str(len(self._mesh_variations)) + " types of meshes.")
@@ -966,75 +909,67 @@ class TurtleInterpreter:
         # and knit them together
         unique_id = "tree_bake_mesh_"+str(len(self._scene.geometry))
 
+        # copy from proto type
+        new_mesh.CopyFrom(self._mesh_variations[(1, 1, 1)][0])
+
         new_mesh.id = unique_id
-        new_mesh.primitive_type = new_mesh.TRIANGLES
-        new_mesh.vertex_count = 0
         
-        # Create new vertex layer
+        # Create new vertex layer source
         
         vtx_lyr = rtr_format_pb2.LayerSource()
         vtx_lyr.id = unique_id + "_vtx_layer"
         vtx_lyr.type = vtx_lyr.FLOAT
 
-        vtx_att_lyr = new_mesh.layer.add()
-        vtx_att_lyr.name = "vertex"
-        vtx_att_lyr.source = vtx_lyr.id
-        vtx_att_lyr.num_components = 3
-        vtx_att_lyr.source_index = 0
-
-        # Create new normal layer
+        # Create new normal layer source
         
         nml_lyr = rtr_format_pb2.LayerSource()
         nml_lyr.id = unique_id + "_nml_layer"
         nml_lyr.type = nml_lyr.FLOAT
 
-        nml_att_lyr = new_mesh.layer.add()
-        nml_att_lyr.name = "normal"
-        nml_att_lyr.source = nml_lyr.id
-        nml_att_lyr.num_components = 3
-        nml_att_lyr.source_index = 0
-
-        # Create new tangent layer
-        
+        # Create new tangent layer source
         tng_lyr = rtr_format_pb2.LayerSource()
         tng_lyr.id = unique_id + "_tng_layer"
         tng_lyr.type = nml_lyr.FLOAT
 
-        tng_att_lyr = new_mesh.layer.add()
-        tng_att_lyr.name = "tangent"
-        tng_att_lyr.source = tng_lyr.id
-        tng_att_lyr.num_components = 4
-        tng_att_lyr.source_index = 0        
-
-        # Create new tex layer
-        # TODO: deal with tex layer properly
+        # Create new tex layer source
         tex_lyr = rtr_format_pb2.LayerSource()
         tex_lyr.id = unique_id + "_tex_layer"
         tex_lyr.type = tex_lyr.FLOAT
 
-        tex_att_lyr = new_mesh.layer.add()
-        tex_att_lyr.name = "uv_diffuse"
-        tex_att_lyr.source = tex_lyr.id
-        tex_att_lyr.num_components = 2
-        tex_att_lyr.source_index = 0            
+        # at first we need to get the original layer source
+        # of the UV diffuse channel
 
-        tex_att_lyr = new_mesh.layer.add()
-        tex_att_lyr.name = "uv_specular"
-        tex_att_lyr.source = tex_lyr.id
-        tex_att_lyr.num_components = 2
-        tex_att_lyr.source_index = 0
+        # The idea here is that all channels that refer to the UV diffuse
+        # UV mapping shall receive updated data as well.
+        # all other channels will just get their data copied for each segment
+        # that will be baked into this one mesh
+        old_uv_source_id = None
+        for layer in new_mesh.layer:
+            if layer.name == "uv_diffuse":
+                old_uv_source_id = layer.source
 
-        tex_att_lyr = new_mesh.layer.add()
-        tex_att_lyr.name = "uv_normalmap"
-        tex_att_lyr.source = tex_lyr.id
-        tex_att_lyr.num_components = 2
-        tex_att_lyr.source_index = 0
+        if not old_uv_source_id:
+            raise RuntimeError("Could not find old UV diffuse source.")
 
-        tex_att_lyr = new_mesh.layer.add()
-        tex_att_lyr.name = "uv_ambientmap"
-        tex_att_lyr.source = tex_lyr.id
-        tex_att_lyr.num_components = 2
-        tex_att_lyr.source_index = 0  
+        self._bake_layer_gets_modified = []
+        # Note that it is a requirement that all UV vertex attribute of the
+        # segment mesh use the same UV source data.
+        for layer in new_mesh.layer:
+            do_modify = False
+            if layer.name == "vertex":
+                do_modify = True
+                layer.source = vtx_lyr.id
+            elif layer.name == "normal":
+                do_modify = True
+                layer.source = nml_lyr.id
+            elif layer.name == "tangent":
+                do_modify = True
+                layer.source = tng_lyr.id
+            elif layer.source == old_uv_source_id:
+                do_modify = True
+                layer.source = tex_lyr.id
+                
+            self._bake_layer_gets_modified.append(do_modify)
 
         # Create the geometry node
         self._bake_geometry = self._scene.geometry.add()
