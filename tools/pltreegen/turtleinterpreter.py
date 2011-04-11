@@ -137,7 +137,13 @@ class TurtleInterpreter:
         if not line_geometry:
             raise RuntimeError("Could not find segment within scene.")
 
-        self._segment_material = line_geometry.material_id
+
+        # find the original material of the segment
+        segment_material_data = db.get(line_geometry.material_id);
+        self._segment_material = rtr_format_pb2.Material()
+        self._segment_material.ParseFromString(segment_material_data)
+        if not self._segment_material:
+            raise RuntimeError("Get error: " + str(db.error()))
 
         line_mesh_data = db.get(line_geometry.mesh_id)
         if not line_mesh_data:
@@ -214,10 +220,9 @@ class TurtleInterpreter:
                                        "zero.")
                     
                 self._line_mesh_tng_lyr = lyr_source                
-                
+
             if (layer.name == "tex_coord"):
-                if (layer.num_components != 2):
-                    raise RuntimeError("Error: tex has to have 2 components.")
+                self._tex_coord_num_components = layer.num_components
                 if (layer.source_index != 0):
                     raise RuntimeError("Error: expecting source index to be "
                                        +"zero.")
@@ -296,6 +301,11 @@ class TurtleInterpreter:
         if not db.set(self._mesh_variations[(1, 1, 1)][0].id,
                       self._mesh_variations[(1, 1, 1)][0].SerializeToString()):
             raise RuntimeError("Get error: " + str(db.error())) 
+
+        # we also need to store the original material
+        if not db.set(self._segment_material.id,
+                      self._segment_material.SerializeToString()):
+            raise RuntimeError("Get error: " + str(db.error()))
 
         # load our destination scene
         
@@ -424,25 +434,25 @@ class TurtleInterpreter:
             tex_att_lyr = new_mesh.layer.add()
             tex_att_lyr.name = "uv_diffuse"
             tex_att_lyr.source = tex_lyr.id
-            tex_att_lyr.num_components = 2
+            tex_att_lyr.num_components = self._tex_coord_num_components
             tex_att_lyr.source_index = 0            
 
             tex_att_lyr = new_mesh.layer.add()
             tex_att_lyr.name = "uv_specular"
             tex_att_lyr.source = tex_lyr.id
-            tex_att_lyr.num_components = 2
+            tex_att_lyr.num_components = self._tex_coord_num_components
             tex_att_lyr.source_index = 0
 
             tex_att_lyr = new_mesh.layer.add()
             tex_att_lyr.name = "uv_normalmap"
             tex_att_lyr.source = tex_lyr.id
-            tex_att_lyr.num_components = 2
+            tex_att_lyr.num_components = self._tex_coord_num_components
             tex_att_lyr.source_index = 0
 
             tex_att_lyr = new_mesh.layer.add()
             tex_att_lyr.name = "uv_ambientmap"
             tex_att_lyr.source = tex_lyr.id
-            tex_att_lyr.num_components = 2
+            tex_att_lyr.num_components = self._tex_coord_num_components
             tex_att_lyr.source_index = 0             
 
             length_inv = 1/length
@@ -462,8 +472,8 @@ class TurtleInterpreter:
                                                                  tng[1::4],
                                                                  tng[2::4],
                                                                  tng[3::4],
-                                                                 tex[::2],
-                                                                 tex[1::2]):
+                                                                 tex[::self._tex_coord_num_components],
+                                                                 tex[1::self._tex_coord_num_components]):
                 scale_factor = (1-z)*previous_width + z*width
                 x_new = x*scale_factor
                 y_new = y*scale_factor
@@ -494,6 +504,8 @@ class TurtleInterpreter:
 
                 tex_lyr.float_data.append(r)
                 tex_lyr.float_data.append(s*length)
+                for i in range(self._tex_coord_num_components-2):
+                    tex_lyr.float_data.append(0)
                 
             [ctr_x, ctr_y, ctr_z, r] = self._get_bounding_sphere(vtx_lyr.float_data)
             new_mesh.bounding_sphere.center_x = ctr_x
@@ -569,8 +581,8 @@ class TurtleInterpreter:
                                                                  tng[1::4],
                                                                  tng[2::4],
                                                                  tng[3::4],
-                                                                 tex[::2],
-                                                                 tex[1::2]):
+                                                                 tex[::self._tex_coord_num_components],
+                                                                 tex[1::self._tex_coord_num_components]):
 
                 t_vtx = model_m * np.array([[x], [y], [z], [1]])
                 self._bake_vtx_lyr.float_data.append(t_vtx[0,0])
@@ -590,6 +602,8 @@ class TurtleInterpreter:
 
                 self._bake_tex_lyr.float_data.append(r)
                 self._bake_tex_lyr.float_data.append(s)
+                for i in range(self._tex_coord_num_components-2):
+                    self._bake_tex_lyr.float_data.append(0)                
 
             # for all layers, which we do not modify, because we ignore them,
             # we still need to make sure their data gets copied
@@ -649,7 +663,7 @@ class TurtleInterpreter:
             segment = self._scene.geometry.add()
             segment.id = "line_instance_"+id_cnt
             segment.transform_node = plc_node.id
-            segment.material_id = self._segment_material
+            segment.material_id = self._segment_material.id
             segment.mesh_id = lookup_mesh.id            
         
         # line was set, move forward
@@ -766,7 +780,7 @@ class TurtleInterpreter:
                   tropism_sensibility,
                   tropism_randomization):
         """For a number of spawn points we interpret the string."""
-        spawn_pattern = "^"+spawn_points_prefix+".*$"
+        spawn_pattern = "^.*"+spawn_points_prefix+".*$"
         spawn_points = [x for x in self._scene.node
                                 if re.match(spawn_pattern,x.id)]
         if not spawn_points:
@@ -975,7 +989,7 @@ class TurtleInterpreter:
         self._bake_geometry = self._scene.geometry.add()
         id_cnt = str(len(self._scene.geometry))
         self._bake_geometry.id = "bake_tree_"+id_cnt
-        self._bake_geometry.material_id = self._segment_material
+        self._bake_geometry.material_id = self._segment_material.id
         self._bake_geometry.mesh_id = new_mesh.id
 
         self._bake_mesh = new_mesh
