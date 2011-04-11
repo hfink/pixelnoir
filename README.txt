@@ -1,3 +1,8 @@
+=============================
+= Pixel Noir Real Time Demo =
+=============================
+
+
 This folder basically contains two projects: 
 
     1.) A so-called "bakery" that reads COLLADA files and bakes them into our own
