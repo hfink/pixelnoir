@@ -31,6 +31,9 @@ Here is a description of the folder contents:
         to distribute an executable version of a project (requires that
         a release version of the player and the bakery has been built before.)
 
+The following script might require some refactoring, and are unlikely to be funcational at the 
+moment:
+
     ./material_bakery.py
         Reads ../player/materials/material.xml and patches a specific *.rtr
         file to contain the manually specified material parameters.
