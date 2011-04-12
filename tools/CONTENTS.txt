@@ -1,0 +1,42 @@
+This folder contains python scripts that are either used by the SCons build
+process directly, or can be used separately for other tasks. 
+
+Here is a description of the folder contents: 
+
+    ./pltreegen
+        Contains scripts that generate trees based on a parametric L-system.
+        There is a separate README in its folder.
+
+    ./config_header_template.hh
+    ./config_source_template.cc
+        Templates which are used for the config loader source generation
+ 
+    ./extGL_header_template.hh
+    ./extGL_source_template.cc
+        Templates which are used for the OpenGL extension load source 
+        generation.
+
+    ./configGen.py
+        Script for code generation of config loaders.
+
+    ./extensionGen.py
+        Script for code generation of an OpenGL extension loader.
+
+    ./formatMapGen.py
+        Script for OpenGL format descriptions.
+
+    ./make_dist.py
+        A script that is used to create a 'dist' folder of the project, i.e.
+        it takes care of copying files into one place which can be used
+        to distribute an executable version of a project (requires that
+        a release version of the player and the bakery has been built before.)
+
+    ./material_bakery.py
+        Reads ../player/materials/material.xml and patches a specific *.rtr
+        file to contain the manually specified material parameters.
+
+    ./rebake_all.py
+        A handy script which automatically rebakes ALL files under
+        ../collada_bakery/assets_collada. All outputs will be placed
+        in ../player/asset. Attention: this overwrites all existing *.rtr
+        without further notice.

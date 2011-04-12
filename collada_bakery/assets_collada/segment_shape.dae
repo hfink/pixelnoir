@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>hfink</author>
+      <authoring_tool>OpenCOLLADA for 3ds Max;  Version: 1.3.0;  Revision: 788M;  Platform: Win32;  Configuration: Release_Max2009_static</authoring_tool>
+      <source_data>file:///C:/Users/hfink/Documents/old_tree_stuff/input_segment.max</source_data>
+    </contributor>
+    <created>2011-04-11T17:01:42</created>
+    <modified>2011-04-11T17:01:42</modified>
+    <unit name="centimeter" meter="0.01"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="bark">
+      <profile_COMMON>
+        <newparam sid="bark_c_jpg-surface">
+          <surface type="2D">
+            <init_from>bark_c_jpg</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="bark_c_jpg-sampler">
+          <sampler2D>
+            <source>bark_c_jpg-surface</source>
+          </sampler2D>
+        </newparam>
+        <newparam sid="bark_spec_jpg-surface">
+          <surface type="2D">
+            <init_from>bark_spec_jpg</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="bark_spec_jpg-sampler">
+          <sampler2D>
+            <source>bark_spec_jpg-surface</source>
+          </sampler2D>
+        </newparam>
+        <newparam sid="bark_b_jpg-surface">
+          <surface type="2D">
+            <init_from>bark_b_jpg</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="bark_b_jpg-sampler">
+          <sampler2D>
+            <source>bark_b_jpg-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission>
+              <color>0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color>0.5882353 0.5882353 0.5882353 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="bark_c_jpg-sampler" texcoord="CHANNEL1"/>
+            </diffuse>
+            <specular>
+              <texture texture="bark_spec_jpg-sampler" texcoord="CHANNEL1"/>
+            </specular>
+            <shininess>
+              <float>9.999999</float>
+            </shininess>
+            <reflective>
+              <color>0 0 0 1</color>
+            </reflective>
+            <transparent opaque="A_ONE">
+              <color>1 1 1 1</color>
+            </transparent>
+            <transparency>
+              <float>1</float>
+            </transparency>
+          </blinn>
+          <extra>
+            <technique profile="OpenCOLLADA3dsMax">
+              <bump bumptype="HEIGHTFIELD">
+                <texture texture="bark_b_jpg-sampler" texcoord="CHANNEL1"/>
+              </bump>
+            </technique>
+          </extra>
+        </technique>
+      </profile_COMMON>
+      <extra>
+        <technique profile="OpenCOLLADA3dsMax">
+          <extended_shader>
+            <apply_reflection_dimming>0</apply_reflection_dimming>
+            <dim_level>0</dim_level>
+            <falloff_type>0</falloff_type>
+            <index_of_refraction>1.5</index_of_refraction>
+            <opacity_type>0</opacity_type>
+            <reflection_level>3</reflection_level>
+            <wire_size>1</wire_size>
+            <wire_units>0</wire_units>
+          </extended_shader>
+          <shader>
+            <ambient_diffuse_lock>1</ambient_diffuse_lock>
+            <ambient_diffuse_texture_lock>1</ambient_diffuse_texture_lock>
+            <diffuse_specular_lock>0</diffuse_specular_lock>
+            <soften>0.1</soften>
+            <use_self_illum_color>0</use_self_illum_color>
+          </shader>
+        </technique>
+      </extra>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="bark-material" name="bark">
+      <instance_effect url="#bark"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="geom-segment" name="segment">
+      <mesh>
+        <source id="geom-segment-positions">
+          <float_array id="geom-segment-positions-array" count="195">0.4619399 0.1913414 0 0.3535536 0.3535532 0 0.191342 0.4619396 0 2.5332e-7 0.5 0 -0.1913415 0.4619398 0 -0.3535532 0.3535535 0 -0.4619397 0.1913419 0 -0.5 1.78814e-7 0 -0.4619398 -0.1913416 0 -0.3535535 -0.3535533 0 -0.1913418 -0.4619397 0 -7.45058e-8 -0.5 0 0.1913417 -0.4619398 0 0.3535534 -0.3535534 0 0.4619398 -0.1913417 0 0.5 0 0 0.4619399 0.1913414 1 0.3535536 0.3535532 1 0.191342 0.4619396 1 2.5332e-7 0.5 1 -0.1913415 0.4619398 1 -0.3535532 0.3535535 1 -0.4619397 0.1913419 1 -0.5 1.78814e-7 1 -0.4619398 -0.1913416 1 -0.3535535 -0.3535533 1 -0.1913418 -0.4619397 1 -7.45058e-8 -0.5 1 0.1913417 -0.4619398 1 0.3535534 -0.3535534 1 0.4619398 -0.1913417 1 0.5 0 1 0.4000516 0.1657068 1.25 0.3061862 0.3061862 1.25 0.1657068 0.4000516 1.25 0 0.4330127 1.25 -0.1657068 0.4000516 1.25 -0.3061862 0.3061862 1.25 -0.4000516 0.1657068 1.25 -0.4330127 0 1.25 -0.4000516 -0.1657068 1.25 -0.3061862 -0.3061862 1.25 -0.1657068 -0.4000516 1.25 0 -0.4330127 1.25 0.1657068 -0.4000516 1.25 0.3061862 -0.3061862 1.25 0.4000516 -0.1657068 1.25 0.4330127 0 1.25 0.2309699 0.09567086 1.433013 0.1767767 0.1767767 1.433013 0.09567086 0.2309699 1.433013 0 0.25 1.433013 -0.09567086 0.2309699 1.433013 -0.1767767 0.1767767 1.433013 -0.2309699 0.09567086 1.433013 -0.25 0 1.433013 -0.2309699 -0.09567086 1.433013 -0.1767767 -0.1767767 1.433013 -0.09567086 -0.2309699 1.433013 0 -0.25 1.433013 0.09567086 -0.2309699 1.433013 0.1767767 -0.1767767 1.433013 0.2309699 -0.09567086 1.433013 0.25 0 1.433013 0 2.22045e-16 1.5</float_array>
+          <technique_common>
+            <accessor source="#geom-segment-positions-array" count="65" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-segment-normals">
+          <float_array id="geom-segment-normals-array" count="195">0.9238797 0.3826831 0 0.7071071 0.7071065 0 0.3826839 0.9238793 0 5.46951e-7 1 0 -0.3826829 0.9238797 0 -0.7071065 0.7071071 0 -0.9238794 0.3826838 0 -1 3.11458e-7 0 -0.9238796 -0.3826832 0 -0.7071069 -0.7071066 0 -0.3826836 -0.9238794 0 -1.51931e-7 -0.9999999 0 0.3826833 -0.9238796 0 0.7071068 -0.7071068 0 0.9238795 -0.3826835 0 0.9999999 -1.59527e-7 0 0.9159656 0.3794051 0.1306095 0.70105 0.7010493 0.1306095 0.3794057 0.9159653 0.1306095 3.94346e-7 0.9914339 0.1306095 -0.379405 0.9159656 0.1306095 -0.7010494 0.7010499 0.1306095 -0.9159654 0.3794056 0.1306095 -0.9914339 2.33545e-7 0.1306095 -0.9159656 -0.3794051 0.1306095 -0.7010498 -0.7010494 0.1306095 -0.3794055 -0.9159654 0.1306094 -1.18687e-7 -0.9914339 0.1306095 0.3794053 -0.9159655 0.1306095 0.7010496 -0.7010496 0.1306095 0.9159654 -0.3794054 0.1306095 0.9914339 -1.22515e-7 0.1306096 0.7995872 0.3311998 0.5009662 0.6119777 0.6119774 0.5009662 0.3312 0.7995871 0.5009662 1.17327e-7 0.8654668 0.5009661 -0.3311996 0.7995872 0.5009662 -0.6119773 0.6119777 0.5009663 -0.7995871 0.3312 0.5009662 -0.8654668 7.82177e-8 0.5009661 -0.7995872 -0.3311998 0.5009662 -0.6119776 -0.6119775 0.5009662 -0.3311999 -0.7995872 0.5009661 -3.91089e-8 -0.8654668 0.5009662 0.3311996 -0.7995871 0.5009663 0.6119773 -0.6119775 0.5009663 0.7995871 -0.3311999 0.5009662 0.8654669 -4.30197e-8 0.5009663 0.4610316 0.1909655 0.8665923 0.3528586 0.3528581 0.8665922 0.1909656 0.4610313 0.8665924 -3.87817e-9 0.4990168 0.8665924 -0.1909655 0.4610314 0.8665923 -0.3528585 0.3528581 0.8665922 -0.4610316 0.1909655 0.8665923 -0.4990167 0 0.8665923 -0.4610315 -0.1909654 0.8665923 -0.3528586 -0.3528581 0.8665922 -0.1909656 -0.4610313 0.8665924 3.87817e-9 -0.4990168 0.8665924 0.1909655 -0.4610314 0.8665923 0.3528585 -0.3528581 0.8665922 0.4610316 -0.1909655 0.8665923 0.4990167 0 0.8665923 0 2.89636e-9 1</float_array>
+          <technique_common>
+            <accessor source="#geom-segment-normals-array" count="65" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-segment-map1">
+          <float_array id="geom-segment-map1-array" count="213">0.8124999 9.99093e-4 0.9990011 0.8749999 9.99093e-4 0.9990011 0.9374999 9.99093e-4 0.9990011 0.9999999 9.99093e-4 0.9990011 0.06249991 9.99093e-4 0.9990011 0.1249999 9.99093e-4 0.9990011 0.1874999 9.99093e-4 0.9990011 0.2499999 9.99093e-4 0.9990011 0.3124999 9.99093e-4 0.999001 0.3749999 9.99093e-4 0.9990011 0.4374999 9.99093e-4 0.999001 0.4999999 9.99093e-4 0.999001 0.5624999 9.99093e-4 0.999001 0.6249999 9.99093e-4 0.9990011 0.6875 9.99093e-4 0.9990011 0.75 9.99093e-4 0.9990011 0.8124999 1.333 0.9990011 0.8749999 1.333 0.9990011 0.9374999 1.333 0.9990011 0.9999999 1.333 0.9990011 0.06249991 1.333 0.9990011 0.1249999 1.333 0.9990011 0.1874999 1.333 0.9990011 0.2499999 1.333 0.9990011 0.3124999 1.333 0.999001 0.3749999 1.333 0.9990011 0.4374999 1.333 0.999001 0.4999999 1.333 0.999001 0.5624999 1.333 0.999001 0.6249999 1.333 0.9990011 0.6875 1.333 0.9990011 0.75 1.333 0.9990011 0.8124999 1.666001 0.8651603 0.8749999 1.666001 0.8651603 0.9374999 1.666001 0.8651603 0.9999999 1.666001 0.8651603 0.06249999 1.666001 0.8651603 0.125 1.666001 0.8651603 0.1875 1.666001 0.8651603 0.25 1.666001 0.8651603 0.3125 1.666001 0.8651603 0.375 1.666001 0.8651602 0.4375 1.666001 0.8651602 0.5 1.666001 0.8651602 0.5625 1.666001 0.8651602 0.625 1.666001 0.8651602 0.6875 1.666001 0.8651603 0.75 1.666001 0.8651603 0.8124999 1.909774 0.4995006 0.8749999 1.909774 0.4995006 0.9374999 1.909774 0.4995006 0.9999999 1.909774 0.4995006 0.06249995 1.909774 0.4995006 0.125 1.909774 0.4995006 0.1875 1.909774 0.4995005 0.25 1.909774 0.4995005 0.3125 1.909774 0.4995005 0.375 1.909774 0.4995005 0.4375 1.909774 0.4995005 0.5 1.909774 0.4995005 0.5625 1.909774 0.4995005 0.625 1.909774 0.4995005 0.6875 1.909774 0.4995005 0.75 1.909774 0.4995006 0.5 1.999001 6.65734e-8 1.0625 9.99093e-4 0.9990011 1.0625 1.333 0.9990011 1.0625 1.666001 0.8651603 1.0625 1.909774 0.4995006 1.5 1.999001 6.65734e-8 2 1.909774 0.4995006</float_array>
+          <technique_common>
+            <accessor source="#geom-segment-map1-array" count="71" stride="3">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+              <param name="P" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="geom-segment-vertices">
+          <input semantic="POSITION" source="#geom-segment-positions"/>
+        </vertices>
+        <triangles material="bark" count="112">
+          <input semantic="VERTEX" source="#geom-segment-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#geom-segment-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#geom-segment-map1" offset="2" set="0"/>
+          <p>1 1 1 17 17 17 16 16 16 16 16 16 0 0 0 1 1 1 2 2 2 18 18 18 17 17 17 17 17 17 1 1 1 2 2 2 3 3 3 19 19 19 18 18 18 18 18 18 2 2 2 3 3 3 4 4 65 20 20 66 19 19 19 19 19 19 3 3 3 4 4 65 5 5 5 21 21 21 20 20 20 20 20 20 4 4 4 5 5 5 6 6 6 22 22 22 21 21 21 21 21 21 5 5 5 6 6 6 7 7 7 23 23 23 22 22 22 22 22 22 6 6 6 7 7 7 8 8 8 24 24 24 23 23 23 23 23 23 7 7 7 8 8 8 9 9 9 25 25 25 24 24 24 24 24 24 8 8 8 9 9 9 10 10 10 26 26 26 25 25 25 25 25 25 9 9 9 10 10 10 11 11 11 27 27 27 26 26 26 26 26 26 10 10 10 11 11 11 12 12 12 28 28 28 27 27 27 27 27 27 11 11 11 12 12 12 13 13 13 29 29 29 28 28 28 28 28 28 12 12 12 13 13 13 14 14 14 30 30 30 29 29 29 29 29 29 13 13 13 14 14 14 15 15 15 31 31 31 30 30 30 30 30 30 14 14 14 15 15 15 0 0 0 16 16 16 31 31 31 31 31 31 15 15 15 0 0 0 17 17 17 33 33 33 32 32 32 32 32 32 16 16 16 17 17 17 18 18 18 34 34 34 33 33 33 33 33 33 17 17 17 18 18 18 19 19 19 35 35 35 34 34 34 34 34 34 18 18 18 19 19 19 20 20 66 36 36 67 35 35 35 35 35 35 19 19 19 20 20 66 21 21 21 37 37 37 36 36 36 36 36 36 20 20 20 21 21 21 22 22 22 38 38 38 37 37 37 37 37 37 21 21 21 22 22 22 23 23 23 39 39 39 38 38 38 38 38 38 22 22 22 23 23 23 24 24 24 40 40 40 39 39 39 39 39 39 23 23 23 24 24 24 25 25 25 41 41 41 40 40 40 40 40 40 24 24 24 25 25 25 26 26 26 42 42 42 41 41 41 41 41 41 25 25 25 26 26 26 27 27 27 43 43 43 42 42 42 42 42 42 26 26 26 27 27 27 28 28 28 44 44 44 43 43 43 43 43 43 27 27 27 28 28 28 29 29 29 45 45 45 44 44 44 44 44 44 28 28 28 29 29 29 30 30 30 46 46 46 45 45 45 45 45 45 29 29 29 30 30 30 31 31 31 47 47 47 46 46 46 46 46 46 30 30 30 31 31 31 16 16 16 32 32 32 47 47 47 47 47 47 31 31 31 16 16 16 33 33 33 49 49 49 48 48 48 48 48 48 32 32 32 33 33 33 34 34 34 50 50 50 49 49 49 49 49 49 33 33 33 34 34 34 35 35 35 51 51 51 50 50 50 50 50 50 34 34 34 35 35 35 36 36 67 52 52 68 51 51 51 51 51 51 35 35 35 36 36 67 37 37 37 53 53 53 52 52 52 52 52 52 36 36 36 37 37 37 38 38 38 54 54 54 53 53 53 53 53 53 37 37 37 38 38 38 39 39 39 55 55 55 54 54 54 54 54 54 38 38 38 39 39 39 40 40 40 56 56 56 55 55 55 55 55 55 39 39 39 40 40 40 41 41 41 57 57 57 56 56 56 56 56 56 40 40 40 41 41 41 42 42 42 58 58 58 57 57 57 57 57 57 41 41 41 42 42 42 43 43 43 59 59 59 58 58 58 58 58 58 42 42 42 43 43 43 44 44 44 60 60 60 59 59 59 59 59 59 43 43 43 44 44 44 45 45 45 61 61 61 60 60 60 60 60 60 44 44 44 45 45 45 46 46 46 62 62 62 61 61 61 61 61 61 45 45 45 46 46 46 47 47 47 63 63 63 62 62 62 62 62 62 46 46 46 47 47 47 32 32 32 48 48 48 63 63 63 63 63 63 47 47 47 32 32 32 48 48 48 49 49 49 64 64 64 49 49 49 50 50 50 64 64 64 50 50 50 51 51 51 64 64 64 51 51 70 52 52 68 64 64 69 52 52 52 53 53 53 64 64 64 53 53 53 54 54 54 64 64 64 54 54 54 55 55 55 64 64 64 55 55 55 56 56 56 64 64 64 56 56 56 57 57 57 64 64 64 57 57 57 58 58 58 64 64 64 58 58 58 59 59 59 64 64 64 59 59 59 60 60 60 64 64 64 60 60 60 61 61 61 64 64 64 61 61 61 62 62 62 64 64 64 62 62 62 63 63 63 64 64 64 63 63 63 48 48 48 64 64 64</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_lights>
+    <light id="EnvironmentAmbientLight" name="EnvironmentAmbientLight">
+      <technique_common>
+        <ambient>
+          <color>0.4 0.4 0.4</color>
+        </ambient>
+      </technique_common>
+    </light>
+  </library_lights>
+  <library_images>
+    <image id="bark_b_jpg">
+      <init_from>./images/bark_b.jpg</init_from>
+    </image>
+    <image id="bark_c_jpg">
+      <init_from>./images/bark_c.jpg</init_from>
+    </image>
+    <image id="bark_spec_jpg">
+      <init_from>./images/bark_spec.jpg</init_from>
+    </image>
+  </library_images>
+  <library_visual_scenes>
+    <visual_scene id="MaxScene">
+      <node name="EnvironmentAmbientLight">
+        <instance_light url="#EnvironmentAmbientLight"/>
+      </node>
+      <node id="node-segment" name="segment">
+        <scale>10 10 10</scale>
+        <instance_geometry url="#geom-segment">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="bark" target="#bark-material">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#MaxScene"/>
+  </scene>
+</COLLADA>
